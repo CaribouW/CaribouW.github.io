@@ -2,6 +2,17 @@
 ## Docs: https://hexo.io/docs/configuration.html
 ## Source: https://github.com/hexojs/hexo/
 
+# title: # 文章标题
+# author: # 作者
+# tags: 
+#   - Hexo
+#   - Next
+# categories: 
+#   - Hexo
+#   - Next
+# description: # 描述，首页文章显示的摘要
+# date: 
+# ---
 # Site
 title: Caribou
 subtitle:
