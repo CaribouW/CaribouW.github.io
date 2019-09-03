@@ -5,7 +5,7 @@ tags:
   - Tree
 categories: 
   - 算法
-description: 基本
+description: 判定一颗给定树是否对称
 ---
 
 ## Leet code 101 对称树判定
