@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/Caribou.github.io/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/Caribou.github.io/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/Caribou.github.io/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Caribou.github.io/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/Caribou.github.io/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/Caribou.github.io/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/Caribou.github.io/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="K8S,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一条从Spring Cloud向K8S的路,循循善诱.">
+<meta name="keywords" content="K8S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernets 进行集群部署">
+<meta property="og:url" content="https://caribouw.github.io/Caribou.github.io/2019/09/12/Kebernets 进行集群部署/index.html">
+<meta property="og:site_name" content="Caribou">
+<meta property="og:description" content="一条从Spring Cloud向K8S的路,循循善诱.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-15T08:40:59.547Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kubernets 进行集群部署">
+<meta name="twitter:description" content="一条从Spring Cloud向K8S的路,循循善诱.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Caribou.github.io/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://caribouw.github.io/Caribou.github.io/2019/09/12/Kebernets 进行集群部署/">
+
+
+
+
+
+  <title>Kubernets 进行集群部署 | Caribou</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/Caribou.github.io/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Caribou</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/Caribou.github.io/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/Caribou.github.io/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/Caribou.github.io/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/Caribou.github.io/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/Caribou.github.io/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://caribouw.github.io/Caribou.github.io/Caribou.github.io/2019/09/12/Kebernets 进行集群部署/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Fangming Lu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/Caribou.github.io/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Caribou">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kubernets 进行集群部署</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-12T23:23:08+08:00">
+                2019-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Caribou.github.io/categories/服务/" itemprop="url" rel="index">
+                    <span itemprop="name">服务</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+
+          
+              <div class="post-description">
+                  一条从Spring Cloud向K8S的路,循循善诱.
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Kubernets-进行集群部署"><a href="#Kubernets-进行集群部署" class="headerlink" title="Kubernets 进行集群部署"></a>Kubernets 进行集群部署</h2><h3 id="关键定义"><a href="#关键定义" class="headerlink" title="关键定义"></a>关键定义</h3><ul>
+<li><h5 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h5></li>
+</ul>
+<p>运行在Node节点上的若干个容器集合，是一个在容器基础上的更高的抽象。主要由 <code>master</code> 节点进行调度，将生成实例化的 Pod 调度到某一个 Node 上进行绑定；</p>
+<p>当某一个 Node 宕机，可以进行重新调度，将 Pod 调度到其他的 Node 节点上.</p>
+<ul>
+<li><h5 id="Replication-Controller"><a href="#Replication-Controller" class="headerlink" title="Replication Controller"></a>Replication Controller</h5></li>
+</ul>
+<p>我们一般不会手动自己创建Pod，这样很难管理。利用Replication Controller，可以定义Pod运行内容，副本的个数等信息，它的升级版本是 ReplicaSet。现在已经创建了Pod的一些副本，那么在这些副本上如何均衡负载呢？我们需要的是Service。</p>
+<ul>
+<li><h5 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h5></li>
+</ul>
+<p>可以把一组Pod组成服务 Service，Service有一个虚拟的ClusterIP，服务访问可以通过ClusterIP作为统一请求入口，因为一个 Service 对应一组Pod，所以可以做到负载均衡。服务可以通过 NodePort，LoadBalancer的方式暴露对外服务。注意 type = LoadBalancer需要云服务平台提供基础的服务，自建的K8S集群默认是没有这个东西的。如果在阿里云上定义服务 type = LoadBalancer 后，你会发现，在管理后台的负载均衡页面，会增加一个负载均衡器</p>
+<p>从以上的定义中看出, 一个Node可以认为是一台主机, 而Service作为一个服务提供者, 下包含了多个冗余Node. 能够在某一个Node宕机时及时进行其他备用节点的替补. </p>
+<p>我们需要把docker镜像push到远端的某一个镜像管理平台，而后通过配置文件的形式来定义Pod和Service的内容,实现分布式部署.</p>
+<h3 id="K8s-YAML配置文件"><a href="#K8s-YAML配置文件" class="headerlink" title="K8s YAML配置文件"></a>K8s YAML配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"># yaml格式的pod定义文件完整内容：</span><br><span class="line">apiVersion: v1       #必选，版本号，例如v1</span><br><span class="line">kind: Pod       #必选，Pod</span><br><span class="line">metadata:       #必选，元数据</span><br><span class="line">  name: string       #必选，Pod名称</span><br><span class="line">  namespace: string    #必选，Pod所属的命名空间</span><br><span class="line">  labels:      #自定义标签</span><br><span class="line">    - name: string     #自定义标签名字</span><br><span class="line">  annotations:       #自定义注释列表</span><br><span class="line">    - name: string</span><br><span class="line">spec:         #必选，Pod中容器的详细定义</span><br><span class="line">  containers:      #必选，Pod中容器列表</span><br><span class="line">  - name: string     #必选，容器名称</span><br><span class="line">    image: string    #必选，容器的镜像名称</span><br><span class="line">    imagePullPolicy: [Always | Never | IfNotPresent] #获取镜像的策略 Alawys表示下载镜像 IfnotPresent表示优先使用本地镜像，否则下载镜像，Nerver表示仅使用本地镜像</span><br><span class="line">    command: [string]    #容器的启动命令列表，如不指定，使用打包时使用的启动命令</span><br><span class="line">    args: [string]     #容器的启动命令参数列表</span><br><span class="line">    workingDir: string     #容器的工作目录</span><br><span class="line">    volumeMounts:    #挂载到容器内部的存储卷配置</span><br><span class="line">    - name: string     #引用pod定义的共享存储卷的名称，需用volumes[]部分定义的的卷名</span><br><span class="line">      mountPath: string    #存储卷在容器内mount的绝对路径，应少于512字符</span><br><span class="line">      readOnly: boolean    #是否为只读模式</span><br><span class="line">    ports:       #需要暴露的端口库号列表</span><br><span class="line">    - name: string     #端口号名称</span><br><span class="line">      containerPort: int   #容器需要监听的端口号</span><br><span class="line">      hostPort: int    #容器所在主机需要监听的端口号，默认与Container相同</span><br><span class="line">      protocol: string     #端口协议，支持TCP和UDP，默认TCP</span><br><span class="line">    env:       #容器运行前需设置的环境变量列表</span><br><span class="line">    - name: string     #环境变量名称</span><br><span class="line">      value: string    #环境变量的值</span><br><span class="line">    resources:       #资源限制和请求的设置</span><br><span class="line">      limits:      #资源限制的设置</span><br><span class="line">        cpu: string    #Cpu的限制，单位为core数，将用于docker run --cpu-shares参数</span><br><span class="line">        memory: string     #内存限制，单位可以为Mib/Gib，将用于docker run --memory参数</span><br><span class="line">      requests:      #资源请求的设置</span><br><span class="line">        cpu: string    #Cpu请求，容器启动的初始可用数量</span><br><span class="line">        memory: string     #内存清楚，容器启动的初始可用数量</span><br><span class="line">    livenessProbe:     #对Pod内个容器健康检查的设置，当探测无响应几次后将自动重启该容器，检查方法有exec、httpGet和tcpSocket，对一个容器只需设置其中一种方法即可</span><br><span class="line">      exec:      #对Pod容器内检查方式设置为exec方式</span><br><span class="line">        command: [string]  #exec方式需要制定的命令或脚本</span><br><span class="line">      httpGet:       #对Pod内个容器健康检查方法设置为HttpGet，需要制定Path、port</span><br><span class="line">        path: string</span><br><span class="line">        port: number</span><br><span class="line">        host: string</span><br><span class="line">        scheme: string</span><br><span class="line">        HttpHeaders:</span><br><span class="line">        - name: string</span><br><span class="line">          value: string</span><br><span class="line">      tcpSocket:     #对Pod内个容器健康检查方式设置为tcpSocket方式</span><br><span class="line">         port: number</span><br><span class="line">       initialDelaySeconds: 0  #容器启动完成后首次探测的时间，单位为秒</span><br><span class="line">       timeoutSeconds: 0   #对容器健康检查探测等待响应的超时时间，单位秒，默认1秒</span><br><span class="line">       periodSeconds: 0    #对容器监控检查的定期探测时间设置，单位秒，默认10秒一次</span><br><span class="line">       successThreshold: 0</span><br><span class="line">       failureThreshold: 0</span><br><span class="line">       securityContext:</span><br><span class="line">         privileged:false</span><br><span class="line">    restartPolicy: [Always | Never | OnFailure]#Pod的重启策略，Always表示一旦不管以何种方式终止运行，kubelet都将重启，OnFailure表示只有Pod以非0退出码退出才重启，Nerver表示不再重启该Pod</span><br><span class="line">    nodeSelector: obeject  #设置NodeSelector表示将该Pod调度到包含这个label的node上，以key：value的格式指定</span><br><span class="line">    imagePullSecrets:    #Pull镜像时使用的secret名称，以key：secretkey格式指定</span><br><span class="line">    - name: string</span><br><span class="line">    hostNetwork:false      #是否使用主机网络模式，默认为false，如果设置为true，表示使用宿主机网络</span><br><span class="line">    volumes:       #在该pod上定义共享存储卷列表</span><br><span class="line">    - name: string     #共享存储卷名称 （volumes类型有很多种）</span><br><span class="line">      emptyDir: &#123;&#125;     #类型为emtyDir的存储卷，与Pod同生命周期的一个临时目录。为空值</span><br><span class="line">      hostPath: string     #类型为hostPath的存储卷，表示挂载Pod所在宿主机的目录</span><br><span class="line">        path: string     #Pod所在宿主机的目录，将被用于同期中mount的目录</span><br><span class="line">      secret:      #类型为secret的存储卷，挂载集群与定义的secre对象到容器内部</span><br><span class="line">        scretname: string  </span><br><span class="line">        items:     </span><br><span class="line">        - key: string</span><br><span class="line">          path: string</span><br><span class="line">      configMap:     #类型为configMap的存储卷，挂载预定义的configMap对象到容器内部</span><br><span class="line">        name: string</span><br><span class="line">        items:</span><br><span class="line">        - key: string</span><br></pre></td></tr></table></figure>
+
+<h3 id="端口和IP"><a href="#端口和IP" class="headerlink" title="端口和IP"></a>端口和IP</h3><p>和docker的内网环境类似，k8s也具有集群内部网络和外部网络.</p>
+<h4 id="1-nodePort"><a href="#1-nodePort" class="headerlink" title="1. nodePort"></a>1. nodePort</h4><p>外部流量访问k8s集群中service入口的一种方式（另一种方式是LoadBalancer），即nodeIP:nodePort是提供给外部流量访问k8s集群中service的入口。</p>
+<p>比如外部用户要访问k8s集群中的一个Web应用，那么我们可以配置对应service的<strong>type=NodePort</strong>，nodePort=30001。其他用户就可以通过浏览器<a href="http://node:30001访问到该web服务。" target="_blank" rel="noopener">http://node:30001访问到该web服务。</a></p>
+<p>而数据库等服务可能不需要被外界访问，只需被内部服务访问即可，那么我们就不必设置service的NodePort。</p>
+<h4 id="2-port"><a href="#2-port" class="headerlink" title="2. port"></a>2. port</h4><p>k8s集群内部服务之间访问<strong>service</strong>的入口。即<strong>clusterIP:port</strong>是service暴露在clusterIP上的端口。</p>
+<ul>
+<li>mysql容器暴露了3306端口（参考DockerFile），集群内其他容器通过33306端口访问mysql服务，但是<strong>外部流量不能访问mysql服务</strong>，因为mysql服务没有配置NodePort。对应的service.yaml如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr"> name:</span> <span class="string">mysql-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr"> ports:</span></span><br><span class="line"><span class="attr"> - port:</span> <span class="number">33306</span></span><br><span class="line"><span class="attr">   targetPort:</span> <span class="number">3306</span></span><br><span class="line"><span class="attr"> selector:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">mysql-pod</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-targetPort"><a href="#3-targetPort" class="headerlink" title="3. targetPort"></a>3. targetPort</h4><p>容器的端口（最终的流量端口）。targetPort是pod上的端口，从port和nodePort上来的流量，经过kube-proxy流入到后端pod的targetPort上，最后进入容器。</p>
+<p>与<strong>制作容器时暴露的端口一致</strong>（使用DockerFile中的<strong>EXPOSE</strong>），例如官方的nginx（参考DockerFile）暴露80端口。 对应的service.yaml如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr"> name:</span> <span class="string">nginx-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr"> type:</span> <span class="string">NodePort</span>         <span class="string">//</span> <span class="string">有配置NodePort，外部流量可访问k8s中的服务</span></span><br><span class="line"><span class="attr"> ports:</span></span><br><span class="line"><span class="attr"> - port:</span> <span class="number">30080</span>          <span class="string">//</span> <span class="string">服务访问端口</span></span><br><span class="line"><span class="attr">   targetPort:</span> <span class="number">80</span>       <span class="string">//</span> <span class="string">容器端口</span></span><br><span class="line"><span class="attr">   nodePort:</span> <span class="number">30001</span>      <span class="string">//</span> <span class="string">NodePort</span></span><br><span class="line"><span class="attr"> selector:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">nginx-pod</span></span><br></pre></td></tr></table></figure>
+
+<p>总的来说</p>
+<ul>
+<li>port和nodePort都是service的端口，前者暴露给k8s集群内部服务访问，后者暴露给k8s集群外部流量访问。</li>
+<li>从上两个端口过来的数据都需要经过反向代理kube-proxy，流入后端pod的targetPort上，最后到达pod内的容器。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/Caribou.github.io/tags/K8S/" rel="tag"># K8S</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Caribou.github.io/2019/09/01/leetcode-101-Symmetrc-Tree/" rel="next" title="leetcode-101 Symmetrc Tree 对称树的判定">
+                <i class="fa fa-chevron-left"></i> leetcode-101 Symmetrc Tree 对称树的判定
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Caribou.github.io/2019/09/14/leetcode-406-ReconstructQueue/" rel="prev" title="leetcode-406 Reconstruct Queue">
+                leetcode-406 Reconstruct Queue <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Fangming Lu</p>
+              <p class="site-description motion-element" itemprop="description">Make Every Line Holy</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/Caribou.github.io/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/Caribou.github.io/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/Caribou.github.io/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CaribouW" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernets-进行集群部署"><span class="nav-number">1.</span> <span class="nav-text">Kubernets 进行集群部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关键定义"><span class="nav-number">1.1.</span> <span class="nav-text">关键定义</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Pod"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">Pod</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Replication-Controller"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">Replication Controller</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Service"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">Service</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8s-YAML配置文件"><span class="nav-number">1.2.</span> <span class="nav-text">K8s YAML配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口和IP"><span class="nav-number">1.3.</span> <span class="nav-text">端口和IP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-nodePort"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. nodePort</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-port"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. port</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-targetPort"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. targetPort</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fangming Lu</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 本站访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/Caribou.github.io/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/Caribou.github.io/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/Caribou.github.io/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/Caribou.github.io/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/Caribou.github.io/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/Caribou.github.io/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/Caribou.github.io/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/Caribou.github.io/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/Caribou.github.io/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="competition,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="20191005周赛记录">
+<meta name="keywords" content="competition">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LC周赛 2019-10-05">
+<meta property="og:url" content="https://caribouw.github.io/Caribou.github.io/2019/10/08/leetcode-周赛20191005/index.html">
+<meta property="og:site_name" content="Caribou">
+<meta property="og:description" content="20191005周赛记录">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-08T02:13:59.368Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LC周赛 2019-10-05">
+<meta name="twitter:description" content="20191005周赛记录">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/Caribou.github.io/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://caribouw.github.io/Caribou.github.io/2019/10/08/leetcode-周赛20191005/">
+
+
+
+
+
+  <title>LC周赛 2019-10-05 | Caribou</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/Caribou.github.io/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Caribou</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/Caribou.github.io/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/Caribou.github.io/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/Caribou.github.io/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/Caribou.github.io/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/Caribou.github.io/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://caribouw.github.io/Caribou.github.io/Caribou.github.io/2019/10/08/leetcode-周赛20191005/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Fangming Lu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/Caribou.github.io/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Caribou">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LC周赛 2019-10-05</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-08T09:57:04+08:00">
+                2019-10-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Caribou.github.io/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+
+          
+              <div class="post-description">
+                  20191005周赛记录
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-Play-with-Chips"><a href="#1-Play-with-Chips" class="headerlink" title="1. Play with Chips"></a>1. Play with Chips</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>There are some chips, and the i-th chip is at position <code>chips[i]</code>.</p>
+<p>You can perform any of the two following types of moves <strong>any number of times</strong> (possibly zero) <strong>on any chip</strong>:</p>
+<ul>
+<li>Move the <code>i</code>-th chip by 2 units to the left or to the right with a cost of <strong>0</strong>.</li>
+<li>Move the <code>i</code>-th chip by 1 unit to the left or to the right with a cost of <strong>1</strong>.</li>
+</ul>
+<p>There can be two or more chips at the same position initially.</p>
+<p>Return the minimum cost needed to move all the chips to the same position (any position).</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>如果两个chip的位置相差为偶数, 则 <code>cost = 0</code>. 否则 <code>coust = 1</code></p>
+<p>我们预先获取chip的一个哈希来进行缓存, 之后遍历哈希中的每一个数, 作为 <strong>目的地</strong>.</p>
+<p>那么我们的问题就变成 ： 找出那一个 <strong>目的地</strong> , 使得 <code>cost</code> 最小即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minCostToMoveChips</span><span class="params">(<span class="keyword">int</span>[] chips)</span> </span>&#123;</span><br><span class="line">    Set&lt;Integer&gt; set = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : chips) &#123;</span><br><span class="line">        set.add(num);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> min = Integer.MAX_VALUE;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : set) &#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> chip : chips) &#123;</span><br><span class="line">            <span class="keyword">int</span> dis = Math.abs(num - chip);</span><br><span class="line">            sum += dis % <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (sum &gt; min) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        min = Math.min(sum, min);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> min;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Longest-Arithmetic-Subsequence-of-Given-Difference"><a href="#2-Longest-Arithmetic-Subsequence-of-Given-Difference" class="headerlink" title="2. Longest Arithmetic Subsequence of Given Difference"></a>2. Longest Arithmetic Subsequence of Given Difference</h2><h3 id="描述-1"><a href="#描述-1" class="headerlink" title="描述"></a>描述</h3><p>Given an integer array <code>arr</code> and an integer <code>difference</code>, return the length of the longest subsequence in <code>arr</code> which is an arithmetic sequence such that the difference between adjacent elements in the subsequence equals <code>difference</code>.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,2,3,4], difference = 1</span><br><span class="line">Output: 4</span><br><span class="line">Explanation: The longest arithmetic subsequence is [1,2,3,4].</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,3,5,7], difference = 1</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The longest arithmetic subsequence is any single element.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: arr = [1,5,7,8,5,3,4,2,1], difference = -2</span><br><span class="line">Output: 4</span><br><span class="line">Explanation: The longest arithmetic subsequence is [7,5,3,1].</span><br></pre></td></tr></table></figure>
+
+<h3 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h3><p>一开始很明显想到用 <code>DP</code> 来解决. 每一步前进的同时需要缓存下当前位置, 便于后续的查找</p>
+<p>我们缓存如下的内容：</p>
+<ul>
+<li>每一个数字和它所处可能位置 <code>Set</code> 的哈希映射</li>
+<li>DP 数组，用于当前 <code>dp[i]</code> 的确定</li>
+</ul>
+<p>一开始就这样做了，但是 error 了一次. 原因就是这里的 dp 数组并不是单调上升，因为可能会出现中间断层的情况，例如 <code>[1,2,3,1,2,3,4]</code> , 中间的 <code>1</code> 位置就是断层的出现点. (之后一想，其实也可以通过自己的维护来进行避免，问题不大)</p>
+<p>最终代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">longestSubsequence</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> difference)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> n = arr.length;</span><br><span class="line">       <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">       Map&lt;Integer, Set&lt;Integer&gt;&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">       dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">       Set&lt;Integer&gt; set = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">       set.add(<span class="number">0</span>);</span><br><span class="line">       map.put(arr[<span class="number">0</span>], set);</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; ++i) &#123;</span><br><span class="line">           <span class="keyword">if</span> (!map.containsKey(arr[i])) &#123;</span><br><span class="line">               set = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">               set.add(i);</span><br><span class="line">               map.put(arr[i], set);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               set = map.get(arr[i]);</span><br><span class="line">               set.add(i);</span><br><span class="line">               map.put(arr[i], set);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">int</span> target = arr[i] - difference;</span><br><span class="line">           <span class="keyword">if</span> (!map.containsKey(target)) &#123; <span class="comment">//不包含前一个数</span></span><br><span class="line">               dp[i] = <span class="number">1</span>;</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               set = map.get(target);</span><br><span class="line">               <span class="keyword">int</span> maxLen = <span class="number">0</span>;</span><br><span class="line">               <span class="keyword">for</span> (<span class="keyword">int</span> num : set) &#123;</span><br><span class="line">                   maxLen = Math.max(maxLen, dp[num]);</span><br><span class="line">               &#125;</span><br><span class="line">               dp[i] = maxLen + <span class="number">1</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> num : dp) &#123;</span><br><span class="line">           ans = Math.max(num, ans);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> ans;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Path-with-Maximum-Gold"><a href="#3-Path-with-Maximum-Gold" class="headerlink" title="3. Path with Maximum Gold"></a>3. Path with Maximum Gold</h2><h3 id="描述-2"><a href="#描述-2" class="headerlink" title="描述"></a>描述</h3><p>In a gold mine <code>grid</code> of size <code>m * n</code>, each cell in this mine has an integer representing the amount of gold in that cell, <code>0</code> if it is empty.</p>
+<p>Return the maximum amount of gold you can collect under the conditions:</p>
+<ul>
+<li>Every time you are located in a cell you will collect all the gold in that cell.</li>
+<li>From your position you can walk one step to the left, right, up or down.</li>
+<li>You can’t visit the same cell more than once.</li>
+<li>Never visit a cell with <code>0</code> gold.</li>
+<li>You can start and stop collecting gold from <strong>any</strong> position in the grid that has some gold. </li>
+</ul>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Input: grid = [[0,6,0],[5,8,7],[0,9,0]]</span><br><span class="line">Output: 24</span><br><span class="line">Explanation:</span><br><span class="line">[[0,6,0],</span><br><span class="line"> [5,8,7],</span><br><span class="line"> [0,9,0]]</span><br><span class="line">Path to get the maximum gold, 9 -&gt; 8 -&gt; 7.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Input: grid = [[1,0,7],[2,0,6],[3,4,5],[0,3,0],[9,0,20]]</span><br><span class="line">Output: 28</span><br><span class="line">Explanation:</span><br><span class="line">[[1,0,7],</span><br><span class="line"> [2,0,6],</span><br><span class="line"> [3,4,5],</span><br><span class="line"> [0,3,0],</span><br><span class="line"> [9,0,20]]</span><br><span class="line">Path to get the maximum gold, 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 6 -&gt; 7.</span><br></pre></td></tr></table></figure>
+
+<h3 id="思路-2"><a href="#思路-2" class="headerlink" title="思路"></a>思路</h3><p>很简单的 DFS 算法实现, 没什么好说的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMaximumGold</span><span class="params">(<span class="keyword">int</span>[][] grid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m = grid.length;</span><br><span class="line">        <span class="keyword">int</span> n = grid[<span class="number">0</span>].length;</span><br><span class="line">        <span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">                <span class="keyword">if</span> (grid[i][j] != <span class="number">0</span>) &#123;</span><br><span class="line">                    max = Math.max(max, dfs(grid, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;i, j&#125;, <span class="number">0</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span>[][] grid, <span class="keyword">int</span>[] startPos, <span class="keyword">int</span> gold)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> m = grid.length, n = grid[<span class="number">0</span>].length;</span><br><span class="line">        <span class="keyword">int</span> r = startPos[<span class="number">0</span>], c = startPos[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (r &lt; <span class="number">0</span> || c &lt; <span class="number">0</span> || r &gt;= m || c &gt;= n || grid[r][c] == <span class="number">0</span>) <span class="keyword">return</span> gold;</span><br><span class="line">        gold += grid[r][c];</span><br><span class="line">        <span class="keyword">int</span>[][] nums = <span class="keyword">new</span> <span class="keyword">int</span>[m][n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">                nums[i][j] = grid[i][j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        nums[r][c] = <span class="number">0</span>;             <span class="comment">//Get the gold</span></span><br><span class="line">        <span class="keyword">int</span> a1 = dfs(nums, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;r, c + <span class="number">1</span>&#125;, gold);</span><br><span class="line">        <span class="keyword">int</span> b1 = dfs(nums, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;r, c - <span class="number">1</span>&#125;, gold);</span><br><span class="line">        <span class="keyword">int</span> c1 = dfs(nums, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;r + <span class="number">1</span>, c&#125;, gold);</span><br><span class="line">        <span class="keyword">int</span> d1 = dfs(nums, <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;r - <span class="number">1</span>, c&#125;, gold);</span><br><span class="line">        <span class="keyword">return</span> Arrays.stream(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;a1, b1, c1, d1&#125;).max().getAsInt();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Count-Vowels-Permutation"><a href="#4-Count-Vowels-Permutation" class="headerlink" title="4. Count Vowels Permutation"></a>4. Count Vowels Permutation</h2><h3 id="描述-3"><a href="#描述-3" class="headerlink" title="描述"></a>描述</h3><p>Given an integer <code>n</code>, your task is to count how many strings of length <code>n</code> can be formed under the following rules:</p>
+<ul>
+<li>Each character is a lower case vowel (<code>&#39;a&#39;</code>, <code>&#39;e&#39;</code>, <code>&#39;i&#39;</code>, <code>&#39;o&#39;</code>, <code>&#39;u&#39;</code>)</li>
+<li>Each vowel <code>&#39;a&#39;</code> may only be followed by an <code>&#39;e&#39;</code>.</li>
+<li>Each vowel <code>&#39;e&#39;</code> may only be followed by an <code>&#39;a&#39;</code> or an <code>&#39;i&#39;</code>.</li>
+<li>Each vowel <code>&#39;i&#39;</code> <strong>may not</strong> be followed by another <code>&#39;i&#39;</code>.</li>
+<li>Each vowel <code>&#39;o&#39;</code> may only be followed by an <code>&#39;i&#39;</code> or a <code>&#39;u&#39;</code>.</li>
+<li>Each vowel <code>&#39;u&#39;</code> may only be followed by an <code>&#39;a&#39;.</code></li>
+</ul>
+<p>Since the answer may be too large, return it modulo <code>10^9 + 7.</code></p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: n = 1</span><br><span class="line">Output: 5</span><br><span class="line">Explanation: All possible strings are: &quot;a&quot;, &quot;e&quot;, &quot;i&quot; , &quot;o&quot; and &quot;u&quot;.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: n = 2</span><br><span class="line">Output: 10</span><br><span class="line">Explanation: All possible strings are: &quot;ae&quot;, &quot;ea&quot;, &quot;ei&quot;, &quot;ia&quot;, &quot;ie&quot;, &quot;io&quot;, &quot;iu&quot;, &quot;oi&quot;, &quot;ou&quot; and &quot;ua&quot;.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: n = 5</span><br><span class="line">Output: 68</span><br></pre></td></tr></table></figure>
+
+<h3 id="思路-3"><a href="#思路-3" class="headerlink" title="思路"></a>思路</h3><p>假定某一步的最末位中, ‘a’ , ‘e’ , ‘i’ , ‘o’ , ‘u’ 的个数分别是 a , e , i , o , u ，那么下一步末位的个数就分别是 <code>u+e+i</code>, <code>a + i</code>, <code>e + o</code> , <code>i</code> , <code>o +i</code> </p>
+<p>我这里用了一个hash来保存 (小声：这个hard题是简单题的赶脚233)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> mod = <span class="number">1_000_000_007</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">countVowelPermutation</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        Map&lt;Character, Long&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        map.put(<span class="string">'a'</span>, <span class="number">1L</span>);</span><br><span class="line">        map.put(<span class="string">'e'</span>, <span class="number">1L</span>);</span><br><span class="line">        map.put(<span class="string">'i'</span>, <span class="number">1L</span>);</span><br><span class="line">        map.put(<span class="string">'o'</span>, <span class="number">1L</span>);</span><br><span class="line">        map.put(<span class="string">'u'</span>, <span class="number">1L</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            Map&lt;Character, Long&gt; tmp = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">            tmp.put(<span class="string">'a'</span>, (map.get(<span class="string">'u'</span>) + map.get(<span class="string">'e'</span>) + map.get(<span class="string">'i'</span>)) % mod);</span><br><span class="line">            tmp.put(<span class="string">'e'</span>, (map.get(<span class="string">'a'</span>) + map.get(<span class="string">'i'</span>)) % mod);</span><br><span class="line">            tmp.put(<span class="string">'i'</span>, (map.get(<span class="string">'e'</span>) + map.get(<span class="string">'o'</span>)) % mod);</span><br><span class="line">            tmp.put(<span class="string">'o'</span>, (map.get(<span class="string">'i'</span>)) % mod);</span><br><span class="line">            tmp.put(<span class="string">'u'</span>, (map.get(<span class="string">'o'</span>) + map.get(<span class="string">'i'</span>)) % mod);</span><br><span class="line"></span><br><span class="line">            map = tmp;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">int</span>) (map.values().stream().reduce(Long::sum).get() % mod);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这次周赛4个题目全部 AC , RANK  740</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/Caribou.github.io/tags/competition/" rel="tag"># competition</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Caribou.github.io/2019/09/29/leetcode-20190929周赛/" rel="next" title="LC周赛 2019-09-29">
+                <i class="fa fa-chevron-left"></i> LC周赛 2019-09-29
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Fangming Lu</p>
+              <p class="site-description motion-element" itemprop="description">Make Every Line Holy</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/Caribou.github.io/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/Caribou.github.io/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/Caribou.github.io/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CaribouW" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Play-with-Chips"><span class="nav-number">1.</span> <span class="nav-text">1. Play with Chips</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#描述"><span class="nav-number">1.1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">1.2.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Longest-Arithmetic-Subsequence-of-Given-Difference"><span class="nav-number">2.</span> <span class="nav-text">2. Longest Arithmetic Subsequence of Given Difference</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#描述-1"><span class="nav-number">2.1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-1"><span class="nav-number">2.2.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Path-with-Maximum-Gold"><span class="nav-number">3.</span> <span class="nav-text">3. Path with Maximum Gold</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#描述-2"><span class="nav-number">3.1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-2"><span class="nav-number">3.2.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Count-Vowels-Permutation"><span class="nav-number">4.</span> <span class="nav-text">4. Count Vowels Permutation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#描述-3"><span class="nav-number">4.1.</span> <span class="nav-text">描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-3"><span class="nav-number">4.2.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fangming Lu</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 本站访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/Caribou.github.io/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/Caribou.github.io/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/Caribou.github.io/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/Caribou.github.io/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
