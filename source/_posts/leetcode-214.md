@@ -198,51 +198,30 @@ add string before the input so the result string will be a palindrome
 2. 假设新的字符串 `s#s*` 的长度是 m , 那么 next[m] 的值就是我们所需要查找的 `从0下标开始的最长回文串`的长度. 取得 s.substr(m) , 进行反转之后复制到首部即可
 
 ```java
-public String shortestPalindrome(String s) {
-    String temp = s + "#" + new StringBuilder(s).reverse().toString();
-    int[] table = getTable(temp);
-    
-    //get the maximum palin part in s starts from 0
-    return new StringBuilder(s.substring(table[table.length - 1])).reverse().toString() + s;
-}
-
-public int[] getTable(String s){
-    //get lookup table
-    int[] table = new int[s.length()];
-    
-    //pointer that points to matched char in prefix part
-    
-    int index = 0;
-    //skip index 0, we will not match a string with itself
-    for(int i = 1; i < s.length(); i++){
-        if(s.charAt(index) == s.charAt(i)){
-            //we can extend match in prefix and postfix
-            table[i] = table[i-1] + 1;
-            index ++;
-        }else{
-            //match failed, we try to match a shorter substring
-            
-            //by assigning index to table[i-1], we will shorten the match string length, and jump to the 
-            //prefix part that we used to match postfix ended at i - 1
-            index = table[i-1];
-            
-            while(index > 0 && s.charAt(index) != s.charAt(i)){
-                //we will try to shorten the match string length until we revert to the beginning of match (index 1)
-                index = table[index-1];
+		private int[] fetchNext(String s) {
+        int j = -1, i = 0;
+        int[] ans = new int[s.length()];
+        ans[0] = -1;
+        while (i < s.length() - 1) {
+            if (-1 == j || s.charAt(i) == s.charAt(j)) {
+                ++j;
+                ++i;
+                if (i == s.length())
+                    break;
+                ans[i] = j;
+            } else {
+                j = ans[j];
             }
-            
-            //when we are here may either found a match char or we reach the boundary and still no luck
-            //so we need check char match
-            if(s.charAt(index) == s.charAt(i)){
-                //if match, then extend one char 
-                index ++ ;
-            }
-            
-            table[i] = index;
         }
-        
+        return ans;
     }
-    
-    return table;
-}
+
+    public String shortestPalindrome(String s) {
+        StringBuilder sb = new StringBuilder(s).reverse();
+        String wholeStr = s + "#" + sb.toString();
+        int[] next = fetchNext(wholeStr);
+        int index = next[wholeStr.length() - 1];
+        return new StringBuilder(s.substring(index + 1)).reverse().append(s).toString();
+    }
 ```
+
