@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Tree,">
+  <meta name="keywords" content="整理,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="寻找二叉树中最深一层的最左侧节点">
-<meta name="keywords" content="Tree">
+<meta name="description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
+<meta name="keywords" content="整理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="leetcode-513 Find Bottom Left Tree Value">
-<meta property="og:url" content="https://caribouw.github.io/Caribou.github.io/2019/09/17/leetcode-513/index.html">
+<meta property="og:title" content="c++新特性">
+<meta property="og:url" content="https://caribouw.github.io/Caribou.github.io/2020/01/15/c-新特性/index.html">
 <meta property="og:site_name" content="Caribou">
-<meta property="og:description" content="寻找二叉树中最深一层的最左侧节点">
+<meta property="og:description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-17T02:22:02.241Z">
+<meta property="og:updated_time" content="2020-01-15T06:19:14.137Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="leetcode-513 Find Bottom Left Tree Value">
-<meta name="twitter:description" content="寻找二叉树中最深一层的最左侧节点">
+<meta name="twitter:title" content="c++新特性">
+<meta name="twitter:description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://caribouw.github.io/Caribou.github.io/2019/09/17/leetcode-513/">
+  <link rel="canonical" href="https://caribouw.github.io/Caribou.github.io/2020/01/15/c-新特性/">
 
 
 
 
 
-  <title>leetcode-513 Find Bottom Left Tree Value | Caribou</title>
+  <title>c++新特性 | Caribou</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://caribouw.github.io/Caribou.github.io/Caribou.github.io/2019/09/17/leetcode-513/">
+    <link itemprop="mainEntityOfPage" href="https://caribouw.github.io/Caribou.github.io/Caribou.github.io/2020/01/15/c-新特性/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Fangming Lu">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">leetcode-513 Find Bottom Left Tree Value</h1>
+          <h1 class="post-title" itemprop="name headline">c++新特性</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-17T23:23:08+08:00">
-                2019-09-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-15T10:14:27+08:00">
+                2020-01-15
               </time>
             
 
@@ -302,28 +302,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/Caribou.github.io/categories/算法/" itemprop="url" rel="index">
-                    <span itemprop="name">算法</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -344,7 +322,7 @@
 
           
               <div class="post-description">
-                  寻找二叉树中最深一层的最左侧节点
+                  虽说是新特性，但是C++ 11 & 14 已经推出了将近10年了.这次就好好整理一下
               </div>
           
 
@@ -361,24 +339,65 @@
       
 
       
-        <h2 id="513-寻找最深最左二叉树节点"><a href="#513-寻找最深最左二叉树节点" class="headerlink" title="513 寻找最深最左二叉树节点"></a>513 寻找最深最左二叉树节点</h2><p>Given a binary tree, find the leftmost value in the last row of the tree.</p>
-<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>二叉树的层次序遍历. 但是有所不同的是, 需要判定每一层的开始位置 。所以我们在每一层queue push 进入之后，添加一个nullptr来进行标记</p>
+        <h2 id="What’s-new-in-C-11"><a href="#What’s-new-in-C-11" class="headerlink" title="What’s new in C++ 11?"></a>What’s new in C++ 11?</h2><h3 id="storage-duration-specifier"><a href="#storage-duration-specifier" class="headerlink" title="storage duration specifier"></a>storage duration specifier</h3><p>多个C++版本都对变量存储时间的定义有严格的说明</p>
 <ul>
-<li>当队列中第一次遇到 <code>nullptr</code> 处在队列末尾, 表示队首节点是最左侧 , 更新 <code>ans</code>。后续再次遇到 <code>nullptr</code> 在队尾时不再计入</li>
-<li>当<code>nullptr</code>处在队首, 表示一行已经被遍历完全. 直接把 <code>nullptr</code> 重新放置到队尾. 置标记位为 <code>true</code></li>
+<li><p><code>auto</code> - <em>automatic</em> storage duration.</p>
+</li>
+<li><p><code>register</code> - <em>automatic</em> storage duration. Also hints to the compiler to place the object in the processor’s register. (deprecated) ——<em>since C++ 17</em></p>
+</li>
+<li><p><code>static</code> - <em>static</em> or <em>thread</em> storage duration and <em>internal</em> linkage</p>
+</li>
+<li><p><code>extern</code> - <em>static</em> or <em>thread</em> storage duration and <em>external</em> linkage.</p>
+</li>
+<li><p><code>thread_local</code> - <em>thread</em> storage duration</p>
+<p>The <code>thread_local</code> keyword is only allowed for objects declared at namespace scope, objects declared at block scope, and static data members. It indicates that the object has <strong>thread storage duration</strong>. It can be combined with <code>static</code> or <code>extern</code> to specify internal or external linkage (except for static data members which always have external linkage), respectively, but that additional <code>static</code> doesn’t affect the storage duration.</p>
+</li>
+<li><p><code>mutable</code> - does not affect storage duration or linkage</p>
+<p>注意：<code>mutable</code> 主要是标识 <strong>const对象</strong> 中某些可变的成员，实现了从二进制的物理 <strong>const</strong> 到逻辑 <strong>const</strong> (外观不变)</p>
+</li>
 </ul>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
-<li>首先我们来看一下简单的二叉树层次序遍历的逻辑</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Solution::levelPrint(TreeNode *root) &#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;TreeNode *&gt; <span class="built_in">queue</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">queue</span>.push(root);</span><br><span class="line">    <span class="keyword">while</span> (!<span class="built_in">queue</span>.empty()) &#123;</span><br><span class="line">        <span class="comment">//visit</span></span><br><span class="line">        TreeNode *node = <span class="built_in">queue</span>.front();</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; node-&gt;val &lt;&lt; <span class="string">","</span>;</span><br><span class="line">        <span class="comment">//pop</span></span><br><span class="line">        <span class="built_in">queue</span>.pop();</span><br><span class="line">        <span class="comment">//push back</span></span><br><span class="line">        <span class="keyword">if</span> (node-&gt;left)</span><br><span class="line">            <span class="built_in">queue</span>.push(node-&gt;left);</span><br><span class="line">        <span class="keyword">if</span> (node-&gt;right)</span><br><span class="line">            <span class="built_in">queue</span>.push(node-&gt;right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Variadic-templates"><a href="#Variadic-templates" class="headerlink" title="Variadic templates"></a>Variadic templates</h3><p>可变类模板，在 <code>c++ reference</code> 里面以 <em>parameter pack</em> 来代替</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span>... <span class="title">Types</span>&gt;			//<span class="title">class</span> ... <span class="title">Types</span> 是一个 <span class="title">pack</span> 的声明	</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">f</span>(<span class="title">Types</span>... <span class="title">args</span>) &#123;</span>&#125;			<span class="comment">//Types... args 是</span></span><br></pre></td></tr></table></figure>
 
-<p>非常明显，我们一直进行队列的出、入, 当队列为空时, 表示我们已经完成了层次序遍历</p>
+<h4 id="Pack-Expansion"><a href="#Pack-Expansion" class="headerlink" title="Pack Expansion"></a>Pack Expansion</h4><ul>
+<li><code>&amp;args...</code> 代表的是参数扩展</li>
+<li><code>&amp;args</code>代表的是 <em>pack pattern</em> 本身</li>
+</ul>
+<h3 id="Move-semantics"><a href="#Move-semantics" class="headerlink" title="Move semantics"></a>Move semantics</h3><blockquote>
+<p><strong>凡是取地址（<code>&amp;</code>）操作可以成功的都是左值，其余都是右值</strong></p>
 <ul>
-<li>我们继续看本题. 由于队尾标识 <code>nullptr</code> 会一直存在, 我们无法根据 <code>队列为空</code> 来进行遍历终结的判定. 那么什么时候已经遍历完了呢？ 非常简单，整个队列只有 <code>nullptr</code> 一个元素. </li>
+<li>等号左边的不一定是左值——可以通过操作符重载来让左部变成 <strong>右值</strong></li>
 </ul>
-<p>具体代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> Solution::findBottomLeftValue(TreeNode *root) &#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;TreeNode *&gt; <span class="built_in">queue</span>;</span><br><span class="line">    <span class="keyword">auto</span> *ans = <span class="keyword">new</span> TreeNode(<span class="number">0</span>);</span><br><span class="line">    <span class="built_in">queue</span>.push(root);</span><br><span class="line">    <span class="built_in">queue</span>.push(<span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">bool</span> endFlag = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">while</span> (!<span class="built_in">queue</span>.empty()) &#123;</span><br><span class="line">        <span class="comment">//visit</span></span><br><span class="line">        TreeNode *node = <span class="built_in">queue</span>.front();</span><br><span class="line">        <span class="built_in">queue</span>.pop();</span><br><span class="line">        <span class="keyword">if</span> (node) &#123;<span class="comment">//第一个不是空</span></span><br><span class="line">            <span class="keyword">if</span> (endFlag &amp;&amp; !<span class="built_in">queue</span>.back()) &#123;</span><br><span class="line">                ans-&gt;val = node-&gt;val;</span><br><span class="line">                endFlag = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//push back</span></span><br><span class="line">            <span class="keyword">if</span> (node-&gt;left) &#123;</span><br><span class="line">                <span class="built_in">queue</span>.push(node-&gt;left);</span><br><span class="line">                endFlag = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;right) &#123;</span><br><span class="line">                <span class="built_in">queue</span>.push(node-&gt;right);</span><br><span class="line">                endFlag = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">queue</span>.size() == <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">queue</span>.front() == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">queue</span>.pop();</span><br><span class="line">            <span class="built_in">queue</span>.push(<span class="literal">nullptr</span>);</span><br><span class="line">            endFlag = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans-&gt;val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h4><p>我们之前常见的都是 <strong>左值引用</strong>，指的是我们只能够将 <strong>左值</strong> 赋给一个引用。</p>
+<ul>
+<li><p><code>int&amp; a = 1</code> 就是非法的。而我们也可以 <code>int const&amp; i = 42;</code> 来进行一个 <em>tricky</em> 的躲避</p>
+<p>在 <code>c++11</code>中允许了右值引用的出现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int&amp;&amp; a = 3;</span><br></pre></td></tr></table></figure>
 
+</li>
+</ul>
+<h4 id="移动语义"><a href="#移动语义" class="headerlink" title="移动语义"></a>移动语义</h4><p>我们在进行 <code>Test(const Test&amp; test)</code> 拷贝构造函数的执行过程中，会造成很多的拷贝浪费。当单独的一次拷贝构造函数 (特别是对指针数组这些资源)过程消耗特别大的时候，对于性能来说是很低的。</p>
+<p>那么 <code>c++11</code>标准给出了 <strong>移动拷贝构造函数</strong> 和 <strong>移动赋值操作符重载</strong>。此外，还支持 <code>std::move()</code>来强制性让 <strong>左值转化为右值</strong></p>
+<h4 id="完美转发"><a href="#完美转发" class="headerlink" title="完美转发"></a>完美转发</h4><p>我们想要实现</p>
+<blockquote>
+<p>多级函数调用过程中</p>
+<ul>
+<li>如果变量是左值，那么它作为其他函数的参数的时候也应该是 <strong>左值</strong></li>
+<li>如果变量是右值，那么它作为其他函数的参数的时候也应该是 <strong>右值</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"in func"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">relay</span><span class="params">(T&amp;&amp; t)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"in relay"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    func(t);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    relay(Test());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这个例子就是一个 <strong>反例</strong>。我们在传入 <code>func(t)</code> 的时候，其实调用了 <strong>拷贝构造函数</strong> (因为编译器把 <strong>t</strong> 当做了一个 <strong>左值</strong>)</p>
+<blockquote>
+<p><code>std::forward&lt;T&gt;()</code> ，能够保留参数的左右值类型</p>
+</blockquote>
+<h3 id="Value-Category"><a href="#Value-Category" class="headerlink" title="Value Category"></a>Value Category</h3><p>不止左值右值那么简单</p>
+<blockquote>
+<p>Cpp reference:</p>
+<p>Each C++ <a href="https://en.cppreference.com/w/cpp/language/expressions" target="_blank" rel="noopener">expression</a> (an operator with its operands, a literal, a variable name, etc.) is characterized by two independent properties: a <em>type</em> and a <em>value category</em>. Each expression has some non-reference type, and each expression belongs to exactly one of the three primary value categories: <em>prvalue</em>, <em>xvalue</em>, and <em>lvalue</em>.</p>
+</blockquote>
 
       
     </div>
@@ -396,7 +415,7 @@
       
         <div class="post-tags">
           
-            <a href="/Caribou.github.io/tags/Tree/" rel="tag"># Tree</a>
+            <a href="/Caribou.github.io/tags/整理/" rel="tag"># 整理</a>
           
         </div>
       
@@ -409,8 +428,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/Caribou.github.io/2019/09/15/review2019-09-15/" rel="next" title="如果可以选择更加友好的方式">
-                <i class="fa fa-chevron-left"></i> 如果可以选择更加友好的方式
+              <a href="/Caribou.github.io/2019/12/22/杂谈-鸡血帖/" rel="next" title="杂谈-沉思帖">
+                <i class="fa fa-chevron-left"></i> 杂谈-沉思帖
               </a>
             
           </div>
@@ -418,10 +437,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/Caribou.github.io/2019/09/23/leetcode-740 /" rel="prev" title="leetcode-740 Delete and earn">
-                leetcode-740 Delete and earn <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -563,7 +578,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#513-寻找最深最左二叉树节点"><span class="nav-number">1.</span> <span class="nav-text">513 寻找最深最左二叉树节点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">1.2.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What’s-new-in-C-11"><span class="nav-number">1.</span> <span class="nav-text">What’s new in C++ 11?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#storage-duration-specifier"><span class="nav-number">1.1.</span> <span class="nav-text">storage duration specifier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Variadic-templates"><span class="nav-number">1.2.</span> <span class="nav-text">Variadic templates</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Pack-Expansion"><span class="nav-number">1.2.1.</span> <span class="nav-text">Pack Expansion</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Move-semantics"><span class="nav-number">1.3.</span> <span class="nav-text">Move semantics</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#右值引用"><span class="nav-number">1.3.1.</span> <span class="nav-text">右值引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移动语义"><span class="nav-number">1.3.2.</span> <span class="nav-text">移动语义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完美转发"><span class="nav-number">1.3.3.</span> <span class="nav-text">完美转发</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Value-Category"><span class="nav-number">1.4.</span> <span class="nav-text">Value Category</span></a></li></ol></li></ol></div>
             
 
           </div>
