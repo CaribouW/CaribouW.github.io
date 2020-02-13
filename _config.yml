@@ -92,3 +92,11 @@ deploy:
   type: git
   repo: https://github.com/CaribouW/Caribou.github.io
   branch: master
+
+
+# math:
+#   engine: 'katex' # or 'katex'
+#   mathjax:
+#     # src: custom_mathjax_source
+#     config:
+#       # MathJax config
