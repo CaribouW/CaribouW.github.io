@@ -6,6 +6,8 @@ tags:
 categories: 
   - 服务
 description: 一条从Spring Cloud向K8S的路,循循善诱.
+cover_img: https://images.unsplash.com/photo-1429667947446-3c93a979b7e0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80
+feature_img: https://images.unsplash.com/photo-1543872084-c7bd3822856f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80
 ---
 
 ## Kubernets 进行集群部署

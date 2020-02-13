@@ -3,6 +3,8 @@ title: c++新特性
 date: 2020-01-15 10:14:27
 tags: 整理
 description: 虽说是新特性，但是C++ 11 & 14 已经推出了将近10年了.这次就好好整理一下
+cover_img: https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80
+feature_img: https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80
 ---
 
 ## What’s new in C++ 11?
