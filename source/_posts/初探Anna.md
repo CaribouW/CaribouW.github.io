@@ -7,7 +7,6 @@ feature_img: https://images.unsplash.com/photo-1517999349371-c43520457b23?ixlib=
 description: 由伯克利开发的新一代数据库引擎
 keywords:
 ---
-
 ## Anna初探
 
 ### 背景
@@ -73,6 +72,24 @@ keywords:
 >
 > 那么就可以说是满足一个晶格的关系。这样的系统我们也称作 **ACI system**
 
+2018 Anna-ieee 中的架构图如下 （单一server）
+
+<img src="https://i.loli.net/2020/02/17/4xZGNqDcfgkKAlj.png" alt="image.png"  />
+
+每一个 *actor*都会周期性发出广播，告知 *changeset* 所关联的 *master* ，将更新信息 *merge* 进入各自的私有状态空间，并且清空 *changeset*
+
+#### 多Tire架构
+
+这一个架构是在 2019 anna-vldb 中给出的，和之前的区别主要是适用于云端的分布式系统。更多地把架构重点放在了 **水平扩展** 、**数据访问偏好&负载均衡**、**数据垂直转移**
+
+分布式Anna架构如下图：
+
+> 多个 *Tier* -> 一个 *Tier* 内部有多个 *node* -> 一个 *node* 内部有多个 *worker thread*
+
+<img src="https://i.loli.net/2020/02/17/RLbxf3vWFSJcnC4.png" alt="image.png"  />
+
+
+
 ### 回到我们的一致性问题
 
 *ACI* 系统中，由于它的组件也必然满足一个lattice关系，我们就可以采用 **自底向上组合** 的方式来进行系统逻辑的构建
@@ -96,7 +113,7 @@ keywords:
 
 关键点：**vector lock**
 
-支持 *casual consistency* 的方案中，*vector lock* 的键由客户端的 *proxy ids* 组成，值则由相对应的版本号组成。他们相互具有关联关系。这里的 *version number* 可以由 **MaxIntLattice** 来进行实现，它每次都取**每一次更新前后的最大值**，所以它的值必定是递增的，也契合了版本号递增的特点。
+支持 *casual consistency* 的方案中，*vector lock* 的键由客户端的 *proxy ids* 组成，值则由相对应的版本号组成。他们相互具有关联关系。这里的 *version number* 可以由 **MaxIntLattice** 来进行实现，它每次都取**更新前后的最大值**，所以它的值必定是递增的，也契合了版本号递增的特点。
 
 当进行一次写操作的时候，会把 **vector lock** 的版本号进行增加，连同数据项一起进行写入
 
@@ -119,6 +136,10 @@ keywords:
 ##### 脏读
 
 添加事务写入的缓冲区，保证未提交的事务不会被放入 *KVS*
+
+
+
+
 
 ### 遗留的一些问题
 
