@@ -2,24 +2,44 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Caribou</title>
   
-  
+  <subtitle>Welcome</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://oasi.top/"/>
-  <updated>2020-02-13T02:25:00.051Z</updated>
-  <id>http://oasi.top/</id>
+  <link href="http://caribou.top/"/>
+  <updated>2020-02-17T07:19:06.963Z</updated>
+  <id>http://caribou.top/</id>
   
   <author>
-    <name>Fangming Lu</name>
+    <name>caribou</name>
     
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>初探Anna</title>
+    <link href="http://caribou.top/2020/02/17/%E5%88%9D%E6%8E%A2Anna/"/>
+    <id>http://caribou.top/2020/02/17/初探Anna/</id>
+    <published>2020-02-17T03:05:56.000Z</published>
+    <updated>2020-02-17T07:19:06.963Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Anna初探"><a href="#Anna初探" class="headerlink" title="Anna初探"></a>Anna初探</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>实习中主要做的是数据库引擎的开发。这一次遇到的是伯克利开发的 <em>Anna</em> ，将透过两篇paper来大致讲述一下入门的内容。</p><h3 id="进入正题"><a href="#进入正题" class="headerlink" title="进入正题"></a>进入正题</h3><p>解决目标：</p><ul><li><em>data scaling</em> ：牵涉到数据分片 <strong>partition</strong></li><li><em>workload scaling</em> ：牵涉到 <strong>multi-master replication</strong></li><li>硬件最大化利用 &amp; 多核计算机性能 ：<strong>wait-free execution</strong> (每一个core尽可能让他们一直工作)</li><li>无协调的一致性 <strong>coordination-free consistency model</strong><ul><li>一致性哈希 &amp; 哈希环</li></ul></li></ul><blockquote><h5 id="Lattice-晶格"><a href="#Lattice-晶格" class="headerlink" title="Lattice 晶格"></a>Lattice 晶格</h5><p>离散里面的一种偏序结构. 整个图里面只有一个起点和一个终点</p><p>达到的事务隔离级别 ：<strong>read-committed transaction</strong></p><p>就这一点，论文中提到了 <strong>casual consistency</strong> 和 <strong>read committed</strong> 两种一致性的<em>level</em> ，具体就留到后面展开论述</p></blockquote><h4 id="可用的分布式状态模型类别"><a href="#可用的分布式状态模型类别" class="headerlink" title="可用的分布式状态模型类别"></a>可用的分布式状态模型类别</h4><ul><li><p>共享内存</p><p>该方式常常需要额外的加锁去锁来进行一致性维护，因而极大地影响了系统运行效率</p><p>Lattice也不能解决异步请求的数据同步问题，它最重要的 <strong>merge function</strong> 也是需要</p></li><li><p>消息传递</p></li></ul><p>采用了消息传递的架构后，工作节点能够拥有类似于 <strong>local-thread</strong> 的私有状态(<em>state</em>)。由于对外界不可见，也就没有了并发的问题</p><p>但是由于各个副本之间牵涉到数据的同步，这就会有一个新的 <strong>状态一致性</strong> 问题的出现，我们需要采用新的机制来进行改进</p><p><strong>Single-Master</strong></p><ul><li>Key值只有一个副本，可以有比较好的一致性</li><li>问题：速度不能超过一个node ，这是一个瓶颈</li></ul><p><strong>Multi-Master</strong></p><ul><li>Key值存在于多个副本中</li><li>周期性进行广播发送<em>update</em> 信息</li><li>问题：一致性不能够保证</li></ul><blockquote><p><strong>Anna</strong> 使用的是无协调的 <em>multi-master replication</em> ，并且基于 <strong>lattice</strong> 来进行一致性的保证</p></blockquote><h3 id="Anna架构"><a href="#Anna架构" class="headerlink" title="Anna架构"></a>Anna架构</h3><p>主要根据两篇(2018 , 2019) 中先后两个版本的 <em>Anna</em> 架构不同点入手</p><blockquote><h4 id="Lattice-based"><a href="#Lattice-based" class="headerlink" title="Lattice based"></a>Lattice based</h4><p><em>Lattice</em> 是这个框架主打的内容：在给定的一个偏序条件下，只要该偏序关系重的 <strong>least upper bound</strong> 又满足了</p><ul><li>Commutativity 交换律</li><li>Associativity 结合律</li><li>Idempotence 幂等</li></ul><p>那么就可以说是满足一个晶格的关系。这样的系统我们也称作 <strong>ACI system</strong></p></blockquote><h3 id="回到我们的一致性问题"><a href="#回到我们的一致性问题" class="headerlink" title="回到我们的一致性问题"></a>回到我们的一致性问题</h3><p><em>ACI</em> 系统中，由于它的组件也必然满足一个lattice关系，我们就可以采用 <strong>自底向上组合</strong> 的方式来进行系统逻辑的构建</p><img src="https://i.loli.net/2020/02/17/cYaxepWz2ZdgVTj.png" alt="image.png" style="zoom: 77%;"><p>如上图所示 （<em>casual consistency</em>）</p><ul><li>每一个工作节点(worker)的状态都采用 <strong>MapLattice</strong> 来进行表示</li><li><strong>MapLattice</strong>的键，是一种不可变的类型(<em>immutable</em>) ；对于值，则是 <strong>ValueLattice</strong></li></ul><blockquote><p>对于 <strong>MapLattice</strong> 的 <em>merge</em> 算子，会对两个 MapLattice 的键进行 <em>Union</em> 操作，若键相同，那么会进行 <strong>ValueLattice</strong> 的 <em>merge</em> 算子</p></blockquote><hr><p>接下来我们需要看之前提及的 <strong>casual consistency</strong> 和 <strong>read committed</strong> </p><h4 id="Casual-Consistency"><a href="#Casual-Consistency" class="headerlink" title="Casual Consistency"></a>Casual Consistency</h4><blockquote><p>A , B 两个用户同时在进行事务处理，如果 B 能够见到 A 的更新，那么 B 的更新将会 <em>Overwrite</em> A用户的更新；如果不能够看到，那么就会触发数据记录的 <em>merge</em> 算子</p></blockquote><p>关键点：<strong>vector lock</strong></p><p>支持 <em>casual consistency</em> 的方案中，<em>vector lock</em> 的键由客户端的 <em>proxy ids</em> 组成，值则由相对应的版本号组成。他们相互具有关联关系。这里的 <em>version number</em> 可以由 <strong>MaxIntLattice</strong> 来进行实现，它每次都取<strong>每一次更新前后的最大值</strong>，所以它的值必定是递增的，也契合了版本号递增的特点。</p><p>当进行一次写操作的时候，会把 <strong>vector lock</strong> 的版本号进行增加，连同数据项一起进行写入</p><p>图中的 <strong>pair lattice</strong> 也具有 <em>merge</em> 算子，具体算法如下</p><blockquote><p>对于两个 <strong>pair lattice</strong> P(a,b) 和 Q(a,b) ，如果 P.a &gt; Q.a (表示偏序大小关系) ，我们称 <strong>P casually follows Q</strong> ，并且将 <em>merge</em> 结果设置为 P</p><p>如果不能够进行比较，那么<em>merge</em> 结果就是</p><p><img src="https://i.loli.net/2020/02/17/cbe2SQOmtJ9KPrx.png" alt="image.png"></p></blockquote><h4 id="Read-Committed"><a href="#Read-Committed" class="headerlink" title="Read Committed"></a>Read Committed</h4><p>和数据库事务隔离级别一样，读提交的要求就是避免 <strong>脏读</strong> 和 <strong>脏写</strong></p><h5 id="脏写"><a href="#脏写" class="headerlink" title="脏写"></a>脏写</h5><p>多个写事件的执行中，我们只需要添加一个 <em>larger timestamp wins</em> 策略</p><h5 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h5><p>添加事务写入的缓冲区，保证未提交的事务不会被放入 <em>KVS</em></p><h3 id="遗留的一些问题"><a href="#遗留的一些问题" class="headerlink" title="遗留的一些问题"></a>遗留的一些问题</h3><ul><li>Critical path of every request 是什么？</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      由伯克利开发的新一代数据库引擎
+    
+    </summary>
+    
+    
+      <category term="笔记" scheme="http://caribou.top/tags/%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>背包问题</title>
-    <link href="http://oasi.top/2020/01/15/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/"/>
-    <id>http://oasi.top/2020/01/15/背包问题/</id>
+    <link href="http://caribou.top/2020/01/15/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/"/>
+    <id>http://caribou.top/2020/01/15/背包问题/</id>
     <published>2020-01-15T09:13:36.000Z</published>
     <updated>2020-02-13T02:25:00.051Z</updated>
     
@@ -32,14 +52,14 @@
     </summary>
     
     
-      <category term="算法" scheme="http://oasi.top/tags/%E7%AE%97%E6%B3%95/"/>
+      <category term="算法" scheme="http://caribou.top/tags/%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
   <entry>
     <title>c++新特性</title>
-    <link href="http://oasi.top/2020/01/15/c-%E6%96%B0%E7%89%B9%E6%80%A7/"/>
-    <id>http://oasi.top/2020/01/15/c-新特性/</id>
+    <link href="http://caribou.top/2020/01/15/c-%E6%96%B0%E7%89%B9%E6%80%A7/"/>
+    <id>http://caribou.top/2020/01/15/c-新特性/</id>
     <published>2020-01-15T02:14:27.000Z</published>
     <updated>2020-02-13T02:42:37.237Z</updated>
     
@@ -52,14 +72,14 @@
     </summary>
     
     
-      <category term="整理" scheme="http://oasi.top/tags/%E6%95%B4%E7%90%86/"/>
+      <category term="整理" scheme="http://caribou.top/tags/%E6%95%B4%E7%90%86/"/>
     
   </entry>
   
   <entry>
     <title>杂谈-沉思帖</title>
-    <link href="http://oasi.top/2019/12/22/%E6%9D%82%E8%B0%88-%E9%B8%A1%E8%A1%80%E5%B8%96/"/>
-    <id>http://oasi.top/2019/12/22/杂谈-鸡血帖/</id>
+    <link href="http://caribou.top/2019/12/22/%E6%9D%82%E8%B0%88-%E9%B8%A1%E8%A1%80%E5%B8%96/"/>
+    <id>http://caribou.top/2019/12/22/杂谈-鸡血帖/</id>
     <published>2019-12-22T15:35:20.000Z</published>
     <updated>2020-02-13T02:37:24.124Z</updated>
     
@@ -71,17 +91,17 @@
     
     </summary>
     
-      <category term="杂谈" scheme="http://oasi.top/categories/%E6%9D%82%E8%B0%88/"/>
+      <category term="杂谈" scheme="http://caribou.top/categories/%E6%9D%82%E8%B0%88/"/>
     
     
-      <category term="UpUp" scheme="http://oasi.top/tags/UpUp/"/>
+      <category term="UpUp" scheme="http://caribou.top/tags/UpUp/"/>
     
   </entry>
   
   <entry>
     <title>TCP/IP 阅读笔记(1)</title>
-    <link href="http://oasi.top/2019/12/14/TCP-IP-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-1/"/>
-    <id>http://oasi.top/2019/12/14/TCP-IP-阅读笔记-1/</id>
+    <link href="http://caribou.top/2019/12/14/TCP-IP-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0-1/"/>
+    <id>http://caribou.top/2019/12/14/TCP-IP-阅读笔记-1/</id>
     <published>2019-12-14T14:24:04.000Z</published>
     <updated>2020-02-13T02:39:07.072Z</updated>
     
@@ -94,14 +114,14 @@
     </summary>
     
     
-      <category term="读书笔记" scheme="http://oasi.top/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://caribou.top/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>设计模式-单例</title>
-    <link href="http://oasi.top/2019/12/07/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B/"/>
-    <id>http://oasi.top/2019/12/07/设计模式-单例/</id>
+    <link href="http://caribou.top/2019/12/07/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B/"/>
+    <id>http://caribou.top/2019/12/07/设计模式-单例/</id>
     <published>2019-12-07T08:47:11.000Z</published>
     <updated>2020-02-13T02:35:02.944Z</updated>
     
@@ -118,14 +138,14 @@
     </summary>
     
     
-      <category term="设计模式" scheme="http://oasi.top/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+      <category term="设计模式" scheme="http://caribou.top/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>数据库-索引</title>
-    <link href="http://oasi.top/2019/12/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%95%B4%E7%90%86-%E7%B4%A2%E5%BC%95/"/>
-    <id>http://oasi.top/2019/12/05/数据库整理-索引/</id>
+    <link href="http://caribou.top/2019/12/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%95%B4%E7%90%86-%E7%B4%A2%E5%BC%95/"/>
+    <id>http://caribou.top/2019/12/05/数据库整理-索引/</id>
     <published>2019-12-05T13:54:56.000Z</published>
     <updated>2020-02-13T02:35:51.473Z</updated>
     
@@ -137,17 +157,17 @@
     
     </summary>
     
-      <category term="笔记" scheme="http://oasi.top/categories/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="http://caribou.top/categories/%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="笔记" scheme="http://oasi.top/tags/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="http://caribou.top/tags/%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>LC周赛 2019-10-05</title>
-    <link href="http://oasi.top/2019/10/08/leetcode-%E5%91%A8%E8%B5%9B20191005/"/>
-    <id>http://oasi.top/2019/10/08/leetcode-周赛20191005/</id>
+    <link href="http://caribou.top/2019/10/08/leetcode-%E5%91%A8%E8%B5%9B20191005/"/>
+    <id>http://caribou.top/2019/10/08/leetcode-周赛20191005/</id>
     <published>2019-10-08T01:57:04.000Z</published>
     <updated>2020-02-13T02:39:49.702Z</updated>
     
@@ -159,17 +179,17 @@
     
     </summary>
     
-      <category term="算法" scheme="http://oasi.top/categories/%E7%AE%97%E6%B3%95/"/>
+      <category term="算法" scheme="http://caribou.top/categories/%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="competition" scheme="http://oasi.top/tags/competition/"/>
+      <category term="competition" scheme="http://caribou.top/tags/competition/"/>
     
   </entry>
   
   <entry>
     <title>LC周赛 2019-09-15</title>
-    <link href="http://oasi.top/2019/09/15/LC%E5%91%A8%E8%B5%9B-2019-09-15/"/>
-    <id>http://oasi.top/2019/09/15/LC周赛-2019-09-15/</id>
+    <link href="http://caribou.top/2019/09/15/LC%E5%91%A8%E8%B5%9B-2019-09-15/"/>
+    <id>http://caribou.top/2019/09/15/LC周赛-2019-09-15/</id>
     <published>2019-09-15T08:41:44.000Z</published>
     <updated>2020-02-13T02:40:52.222Z</updated>
     
@@ -181,17 +201,17 @@
     
     </summary>
     
-      <category term="算法" scheme="http://oasi.top/categories/%E7%AE%97%E6%B3%95/"/>
+      <category term="算法" scheme="http://caribou.top/categories/%E7%AE%97%E6%B3%95/"/>
     
     
-      <category term="competition" scheme="http://oasi.top/tags/competition/"/>
+      <category term="competition" scheme="http://caribou.top/tags/competition/"/>
     
   </entry>
   
   <entry>
     <title>Kubernets 进行集群部署</title>
-    <link href="http://oasi.top/2019/09/12/Kebernets%20%E8%BF%9B%E8%A1%8C%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/"/>
-    <id>http://oasi.top/2019/09/12/Kebernets 进行集群部署/</id>
+    <link href="http://caribou.top/2019/09/12/Kebernets%20%E8%BF%9B%E8%A1%8C%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/"/>
+    <id>http://caribou.top/2019/09/12/Kebernets 进行集群部署/</id>
     <published>2019-09-12T15:23:08.000Z</published>
     <updated>2020-02-13T02:41:44.144Z</updated>
     
@@ -203,10 +223,10 @@
     
     </summary>
     
-      <category term="服务" scheme="http://oasi.top/categories/%E6%9C%8D%E5%8A%A1/"/>
+      <category term="服务" scheme="http://caribou.top/categories/%E6%9C%8D%E5%8A%A1/"/>
     
     
-      <category term="K8S" scheme="http://oasi.top/tags/K8S/"/>
+      <category term="K8S" scheme="http://caribou.top/tags/K8S/"/>
     
   </entry>
   

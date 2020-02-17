@@ -1,7 +1,7 @@
 # Config
 rss:            # link
 favicon: https://dcassetcdn.com/design_img/3692996/607318/21906928/0kqdr3493tqr7p4ezd2qr7gbc1_image.png
-# blog_logo: https://dcassetcdn.com/design_img/3692996/607318/21906928/0kqdr3493tqr7p4ezd2qr7gbc1_image.png
+blog_logo: https://n.sinaimg.cn/sinacn20111/320/w960h960/20190610/8aa3-hyeztys2843302.jpg
 header_image: https://i.loli.net/2017/11/26/5a19c56faa29f.jpg
 bio: Make Every Line Holy
 post_toc: true
@@ -16,7 +16,7 @@ menu:
   # you can add here
 
 # author
-author_image:   # link
+author_image:  https://n.sinaimg.cn/sinacn20111/320/w960h960/20190610/8aa3-hyeztys2843302.jpg
 author_bio: 
 author_location: 
 

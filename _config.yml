@@ -15,16 +15,16 @@
 # ---
 # Site
 title: Caribou
-subtitle:
+subtitle: Welcome
 description: Make Every Line Holy
 keywords:
-author: Fangming Lu
+author: caribou
 language: zh-Hans
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://oasi.top
+url: http://caribou.top
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
