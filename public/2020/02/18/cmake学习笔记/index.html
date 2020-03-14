@@ -20,13 +20,13 @@
 	<link rel="preconnect" href="//9qpuwspm.api.lncld.net">
 	<link rel="preconnect" href="//gravatar.loli.net">
 
-	<title>数据库-索引 | Caribou</title>
+	<title>cmake学习笔记 | Caribou</title>
 
 	<meta name="HandheldFriendly" content="True">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 	<meta name="generator" content="hexo">
 	<meta name="author" content="caribou">
-	<meta name="description" content="数据库索引相关内容">
+	<meta name="description" content>
 
 	
 	<meta name="keywords" content>
@@ -48,14 +48,14 @@
 
 	<meta property="og:site_name" content="Caribou">
 	<meta property="og:type" content="article">
-	<meta property="og:title" content="数据库-索引 | Caribou">
-	<meta property="og:description" content="数据库索引相关内容">
-	<meta property="og:url" content="http://caribou.top/2019/12/05/数据库整理-索引/">
+	<meta property="og:title" content="cmake学习笔记 | Caribou">
+	<meta property="og:description" content>
+	<meta property="og:url" content="http://caribou.top/2020/02/18/cmake学习笔记/">
 
 	
-	<meta property="article:published_time" content="2019-12-05T21:12:00+08:00"> 
+	<meta property="article:published_time" content="2020-02-18T09:02:00+08:00"> 
 	<meta property="article:author" content="caribou">
-	<meta property="article:published_first" content="Caribou, /2019/12/05/数据库整理-索引/">
+	<meta property="article:published_first" content="Caribou, /2020/02/18/cmake学习笔记/">
 	
 
 	
@@ -134,73 +134,31 @@
     <div class="inner">
         <header class="post-full-header">
             <div class="post-full-meta">
-                <time class="post-full-meta-date" datetime="2019-12-05T13:54:56.000Z">
-                    2019-12-5
+                <time class="post-full-meta-date" datetime="2020-02-18T01:12:40.000Z">
+                    2020-02-18
                 </time>
                 
                 <span class="date-divider">/</span>
                 
-                <a href="/categories/笔记/">笔记</a>&nbsp;&nbsp;
-                
                 
             </div>
-            <h1 class="post-full-title">数据库-索引</h1>
+            <h1 class="post-full-title">cmake学习笔记</h1>
         </header>
-        <div class="post-full ">
-            
-            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80)">
-            </figure>
+        <div class="post-full no-image">
             
             <div class="post-full-content">
                 <article id="photoswipe" class="markdown-body">
-                    <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h4 id="页存储"><a href="#页存储" class="headerlink" title="页存储"></a>页存储</h4><img style="zoom:50%;" class="post-img b-lazy" data-img="https://i.loli.net/2019/12/05/dQE6NVkHZJcWfye.png" data-index="0" data-src="https://i.loli.net/2019/12/05/dQE6NVkHZJcWfye.png">
-
-<p>如上就是数据库在Disk Storage的一个存储方式。一个页包含若干 <em>Data Rows</em> , 通过 <em>Row directory</em> 来进行索引</p>
-<blockquote>
-<p>A row in a table can be uniquely specified with the page number (P) and slot number (S).</p>
-</blockquote>
-<h5 id="位图索引"><a href="#位图索引" class="headerlink" title="位图索引"></a>位图索引</h5><p><a href="https://www.cnblogs.com/LBSer/p/3322630.html" target="_blank" rel="noopener">https://www.cnblogs.com/LBSer/p/3322630.html</a></p>
-<p>位图索引中只维护distinct值，也就是说重复的值是不维护在树中</p>
-<p>对于每一个列建立一个</p>
-<ul>
-<li><p>位图索引适合只有几个固定值的列，如性别、婚姻状况、行政区等等，而身份证号这种类型不适合用位图索引。</p>
-</li>
-<li><p>此外，位图索引适合静态数据，而不适合索引频繁更新的列</p>
-</li>
-</ul>
-<h5 id="散列索引"><a href="#散列索引" class="headerlink" title="散列索引"></a>散列索引</h5><p>散列文件组织就是根据一个键通过散列计算把对应的记录都放到同一个槽中，这样的话相同的键值对应的记录就一定是放在同一个文件里了，也就减少了文件读取的次数，提高了效率。</p>
-<p>散列索引根据对应键的散列码来找到最终的索引项的技术，其实和B树就差不多，也就是一种索引之上的二级辅助索引，我理解散列索引都是二级或更高级的稀疏索引，否则桶就太多了，效率也不会很高</p>
-<h5 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h5><p>所谓聚簇索引，就是指<strong>主索引文件</strong>和<strong>数据文件</strong>为==同一份文件==，聚簇索引主要用在<strong>Innodb</strong>存储引擎中。在该索引实现方式中B+Tree的叶子节点上的data就是数据本身，key为主键，如果是一般索引的话，data便会指向对应的主索引，如下图所示：</p>
-<p>在B+Tree的每个叶子节点增加一个指向相邻叶子节点的指针，就形成了带有顺序访问指针的B+Tree。做这个优化的目的是为了提高区间访问的性能，例如图4中如果要查询key为从18到49的所有数据记录，当找到18后，只需顺着节点和指针顺序遍历就可以一次性访问到所有数据节点，极大提到了区间查询效率。</p>
-<h5 id="非聚簇索引"><a href="#非聚簇索引" class="headerlink" title="非聚簇索引"></a>非聚簇索引</h5><p>聚簇索引的叶节点就是数据节点，而非聚簇索引的叶节点仍然是索引节点，并保留一个链接<strong>指向对应数据块</strong>。</p>
-<h5 id="辅助索引"><a href="#辅助索引" class="headerlink" title="辅助索引"></a>辅助索引</h5><p>在聚簇索引之上创建的索引称之为辅助索引，辅助索引访问数据总是需要<strong>二次查找</strong>。辅助索引叶子节点存储的不再是行的物理位置，而是主键值。通过辅助索引首先找到的是主键值，再通过主键值找到数据行的数据叶，再通过数据叶中的Page Directory找到数据行</p>
-<h5 id="唯一索引"><a href="#唯一索引" class="headerlink" title="唯一索引"></a>唯一索引</h5><p>表明此索引的==每一个索引值只对应唯一的数据记录==，对于单列惟一性索引，这保证单列不包含重复的值。对于多列惟一性索引，保证多个值的组合不重复</p>
-<h5 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h5><p>在数据库关系图中为表定义主键将自动创建主键索引，主键索引是唯一索引的特定类型。该索引要求主键中的每个值都唯一。当在查询中使用主键索引时，它还允许对数据的快速访问</p>
-<hr>
-<p>数据库引擎 ：myISAM , innodb</p>
-<p>myisam索引：因为myisam的索引和数据是分开存储存储的，myisam通过<strong>key_buffer</strong>把索引先缓存到内存中，当需要访问数据时（通过索引访问数据），在内存中直接搜索索引，然后通过索引找到磁盘相应数据，这也就是为什么索引不在key buffer命中时，速度慢的原因  </p>
-<p>innodb索引：innodb的数据和索引放在一起，当找到索引也就找到了数据</p>
-<img alt="img" style="zoom:75%;" class="post-img b-lazy" data-img="https://img-blog.csdn.net/20161102111454921?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" data-index="1" data-src="https://img-blog.csdn.net/20161102111454921?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
-
-<p>1.对于<strong>非聚簇索引表</strong>来说（右图），表数据和索引是分成两部分存储的，主键索引和二级索引存储上没有任何区别。使用的是B+树作为索引的存储结构，所有的节点都是索引，叶子节点存储的是索引+索引对应的记录的数据。</p>
-<p>2.对于<strong>聚簇索引表</strong>来说（左图），表数据是和主键一起存储的，主键索引的叶结点存储行数据(包含了主键值)，二级索引的叶结点存储行的主键值。使用的是B+树作为索引的存储结构，非叶子节点都是索引关键字，但非叶子节点中的关键字中不存储对应记录的具体内容或内容地址。叶子节点上的数据是主键与具体记录(数据内容)</p>
-<blockquote>
-<h5 id="聚簇索引的优点"><a href="#聚簇索引的优点" class="headerlink" title="聚簇索引的优点"></a>聚簇索引的优点</h5><p>1.当你需要取出==一定范围内==的数据时，用聚簇索引也比用非聚簇索引好。</p>
-<p>2.当通过聚簇索引查找目标数据时理论上比非聚簇索引要快，因为非聚簇索引定位到对应主键时还要多一次目标记录寻址,即多一次I/O。</p>
-<p>3.使用覆盖索引扫描的查询可以直接使用页节点中的主键值。</p>
-<h5 id="聚簇索引的缺点"><a href="#聚簇索引的缺点" class="headerlink" title="聚簇索引的缺点"></a>聚簇索引的缺点</h5><p>1.<strong>插入速度严重依赖于插入顺序</strong>，按照主键的顺序插入是最快的方式，否则将会出现页分裂，严重影响性能。因此，对于InnoDB表，我们一般都会定义一个自增的ID列为主键。</p>
-<p>2.<strong>更新主键的代价很高，因为将会导致被更新的行移动</strong>。因此，对于InnoDB表，我们一般定义主键为不可更新。</p>
-<p>3.<strong>二级索引访问需要两次索引查找，第一次找到主键值，第二次根据主键值找到行数据。</strong></p>
-<p>二级索引的叶节点存储的是主键值，而不是行指针（非聚簇索引存储的是指针或者说是地址），这是为了减少当出现行移动或数据页分裂时二级索引的维护工作，但会让二级索引占用更多的空间。</p>
-<p>4.<strong>采用聚簇索引插入新值比采用非聚簇索引插入新值的速度要慢很多</strong>，因为插入要保证主键不能重复，判断主键不能重复，采用的方式在不同的索引下面会有很大的性能差距，聚簇索引遍历所有的叶子节点，非聚簇索引也判断所有的叶子节点，但是聚簇索引的叶子节点除了带有主键还有记录值，记录的大小往往比主键要大的多。这样就会导致聚簇索引在判定新记录携带的主键是否重复时进行昂贵的I/O代价。</p>
-</blockquote>
+                    <h2 id="Cmake学习笔记"><a href="#Cmake学习笔记" class="headerlink" title="Cmake学习笔记"></a>Cmake学习笔记</h2><p>用于记录一下cmake开发中的一些整理性工作</p>
+<h4 id="cmake变量"><a href="#cmake变量" class="headerlink" title="cmake变量"></a>cmake变量</h4><p>使用 <code>set(A B)</code> 来定义<code>A</code>这个新的变量，之后就可以通过<code>${A}</code>来进行引用，可以想成一个<strong>自定义宏</strong></p>
+<h4 id="动态-静态链接、头文件配置"><a href="#动态-静态链接、头文件配置" class="headerlink" title="动态/静态链接、头文件配置"></a>动态/静态链接、头文件配置</h4><h5 id="头文件目录"><a href="#头文件目录" class="headerlink" title="头文件目录"></a>头文件目录</h5><p><code>INCLUDE_DIRECTORIES</code></p>
+<p>指定项目使用到的头文件目录，可以一次包含多个头文件目录</p>
+<h5 id="添加库文件"><a href="#添加库文件" class="headerlink" title="添加库文件"></a>添加库文件</h5><p>``</p>
+<h4 id="添加外部文件夹"><a href="#添加外部文件夹" class="headerlink" title="添加外部文件夹"></a>添加外部文件夹</h4><p><code>add_subdirectory(source_dir,[binary_dir])</code></p>
+<p>第一个参数就是外部文件夹的位置，而<code>binary_dir</code>表示输出的位置。如果代码目录在外部，则必须要指定第二个参数</p>
+<p><code>ADD_SUBDIRECTORY</code></p>
 
                 </article>
                 <ul class="tags-postTags">
-                    
-                    <li>
-                        <a href="/tags/笔记/" rel="tag"># 笔记</a>
-                    </li>
                     
                 </ul>
             </div>
@@ -210,14 +168,14 @@
     
     <nav id="gobottom" class="pagination">
         
-        <a class="prev-post" title="设计模式-单例" href="/2019/12/07/设计模式-单例/">
-            ← 设计模式-单例
+        <a class="prev-post" title="Java集合" href="/2020/03/14/Java集合/">
+            ← Java集合
         </a>
         
         <span class="prev-next-post">·</span>
         
-        <a class="next-post" title="LC周赛 2019-10-05" href="/2019/10/08/leetcode-周赛20191005/">
-            LC周赛 2019-10-05 →
+        <a class="next-post" title="TCP-IP-阅读笔记-2 加密算法" href="/2020/02/17/TCP-IP-阅读笔记-2 加密/">
+            TCP-IP-阅读笔记-2 加密算法 →
         </a>
         
     </nav>
@@ -243,7 +201,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#索引"><span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#页存储"><span class="toc-text">页存储</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#位图索引"><span class="toc-text">位图索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#散列索引"><span class="toc-text">散列索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#聚簇索引"><span class="toc-text">聚簇索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#非聚簇索引"><span class="toc-text">非聚簇索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#辅助索引"><span class="toc-text">辅助索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#唯一索引"><span class="toc-text">唯一索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#主键索引"><span class="toc-text">主键索引</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#聚簇索引的优点"><span class="toc-text">聚簇索引的优点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#聚簇索引的缺点"><span class="toc-text">聚簇索引的缺点</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cmake学习笔记"><span class="toc-text">Cmake学习笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#cmake变量"><span class="toc-text">cmake变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动态-静态链接、头文件配置"><span class="toc-text">动态/静态链接、头文件配置</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#头文件目录"><span class="toc-text">头文件目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#添加库文件"><span class="toc-text">添加库文件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#添加外部文件夹"><span class="toc-text">添加外部文件夹</span></a></li></ol></li></ol>
     </div>
 </div>
 
@@ -444,7 +402,7 @@
 			<a href="/" title="Caribou">Caribou &copy; 2020</a>
 			
 				
-			        <span hidden="true" id="/2019/12/05/数据库整理-索引/" class="leancloud-visitors" data-flag-title="数据库-索引">
+			        <span hidden="true" id="/2020/02/18/cmake学习笔记/" class="leancloud-visitors" data-flag-title="cmake学习笔记">
 			            <span>阅读量 </span>
 			            <span class="leancloud-visitors-count">0</span>
 			        </span>
