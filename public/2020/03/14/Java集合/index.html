@@ -232,7 +232,11 @@
 <li><code>1.8</code> 中 , 链表和红黑树是交替使用的。<ul>
 <li>当链表长度达到了 <strong>8</strong> 之后，会转换为红黑树</li>
 <li>当 <code>size</code> 是 <strong>6</strong> 之后，红黑树退化为链表</li>
-<li>原因分析：红黑树<strong>平均</strong>查询效率 O(logN) , 链表 O(N) / 2。在长度是 <strong>8</strong> 的时候，红黑树时间复杂度为 3 , 链表是 <em>8 / 2 = 4</em> 。这时候使用红黑树是效率更高的。而另一边退化的阈值设置为 <strong>6</strong> , 主要是中间有一个 <strong>7</strong> 的 <em>gap</em> , 从而避免红黑树和链表直接的频繁切换</li>
+<li>原因分析：<ul>
+<li>红黑树<strong>平均</strong>查询效率 O(logN) , 链表 O(N) / 2。在长度是 <strong>8</strong> 的时候，红黑树时间复杂度为 3 , 链表是 <em>8 / 2 = 4</em> 。这时候使用红黑树是效率更高的。而另一边退化的阈值设置为 <strong>6</strong> , 主要是中间有一个 <strong>7</strong> 的 <em>gap</em> , 从而避免红黑树和链表直接的频繁切换</li>
+<li>当hashCode离散性很好的时候，树型bin用到的概率非常小，因为数据均匀分布在每个bin中，几乎不会有bin中链表长度会达到阈值。但是在随机hashCode下，离散性可能会变差，然而JDK又不能阻止用户实现这种不好的hash算法，因此就可能导致不均匀的数据分布。不过理想情况下随机hashCode算法下所有bin中节点的分布频率会遵循泊松分布，一个bin中链表长度达到8个元素的概率为0.00000006，几乎是不可能事件</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -257,8 +261,42 @@
 <blockquote>
 <p>重点关注：afterNodeAccess()函数中，会修改modCount,因此当你正在accessOrder=true的模式下,迭代LinkedHashMap时，如果同时查询访问数据，也会导致fail-fast，因为迭代的顺序已经改变。</p>
 </blockquote>
-<h4 id="2-4-ConcurrentHashMap"><a href="#2-4-ConcurrentHashMap" class="headerlink" title="2.4 ConcurrentHashMap"></a>2.4 ConcurrentHashMap</h4><p>前面的几种都是非线程安全的类</p>
-<h3 id="3-SET-大类"><a href="#3-SET-大类" class="headerlink" title="3. SET 大类"></a>3. SET 大类</h3>
+<h4 id="2-4-TreeMap"><a href="#2-4-TreeMap" class="headerlink" title="2.4 TreeMap"></a>2.4 TreeMap</h4><blockquote>
+<p>LinkedHashMap保证数据可以保持插入顺序</p>
+<p>而如果我们希望Map可以保持key的大小顺序的时候，我们就需要利用TreeMap了</p>
+</blockquote>
+<p>内部采用了红黑树，并不是基于 <strong>hash</strong> 来进行实现的</p>
+<h3 id="3-SET-大类"><a href="#3-SET-大类" class="headerlink" title="3. SET 大类"></a>3. SET 大类</h3><h4 id="3-1-HashSet"><a href="#3-1-HashSet" class="headerlink" title="3.1 HashSet"></a>3.1 HashSet</h4><p>内部实现完全使用了 <code>HashMap</code></p>
+<h4 id="3-2-TreeSet"><a href="#3-2-TreeSet" class="headerlink" title="3.2 TreeSet"></a>3.2 TreeSet</h4><p>内部实现采用了 <code>TreeMap</code> ， 持有 <code>NavigableMap</code> 类型的引用</p>
+<h3 id="4-线程安全大类"><a href="#4-线程安全大类" class="headerlink" title="4. 线程安全大类"></a>4. 线程安全大类</h3><h4 id="4-1-ConcurrentHashMap"><a href="#4-1-ConcurrentHashMap" class="headerlink" title="4.1 ConcurrentHashMap"></a>4.1 ConcurrentHashMap</h4><blockquote>
+<ul>
+<li><em>Key , Value</em> 不可以为空</li>
+<li>Hash计算如下 <code>(h ^ (h &gt;&gt;&gt; 16)) &amp; HASH_BITS</code></li>
+<li>链表 &amp; 红黑树使用。链表进行尾插</li>
+<li>链表和红黑树的临界值也是 <strong>8</strong></li>
+</ul>
+</blockquote>
+<p>主要讲述一下和 <em>HashMap</em> 的不同</p>
+<h5 id="Node定义"><a href="#Node定义" class="headerlink" title="Node定义"></a>Node定义</h5><p>在 <em>ConcurrentHashMap</em> 中，<em>Value,next</em> 都设置为了 <code>volatile</code> 内存可见</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Node&lt;K,V&gt;[] initTable() &#123;</span><br><span class="line">        Node&lt;K,V&gt;[] tab; <span class="keyword">int</span> sc;</span><br><span class="line">        <span class="keyword">while</span> ((tab = table) == <span class="keyword">null</span> || tab.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> ((sc = sizeCtl) &lt; <span class="number">0</span>)</span><br><span class="line">                Thread.yield(); <span class="comment">// lost initialization race; just spin</span></span><br><span class="line">          	<span class="comment">//CAS控制</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (U.compareAndSwapInt(<span class="keyword">this</span>, SIZECTL, sc, -<span class="number">1</span>)) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((tab = table) == <span class="keyword">null</span> || tab.length == <span class="number">0</span>) &#123;</span><br><span class="line">                        <span class="keyword">int</span> n = (sc &gt; <span class="number">0</span>) ? sc : DEFAULT_CAPACITY;</span><br><span class="line">                        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">                        Node&lt;K,V&gt;[] nt = (Node&lt;K,V&gt;[])<span class="keyword">new</span> Node&lt;?,?&gt;[n];</span><br><span class="line">                        table = tab = nt;</span><br><span class="line">                        sc = n - (n &gt;&gt;&gt; <span class="number">2</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    sizeCtl = sc;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> tab;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>yield 和 sleep 的异同</strong></p>
+<p>1）yield, sleep 都能暂停当前线程，sleep 可以指定具体休眠的时间，而 yield 则依赖 CPU 的时间片划分。</p>
+<p>2）yield, sleep 两个在暂停过程中，如已经持有锁，则都不会释放锁资源。</p>
+<p>3）yield 不能被中断，而 sleep 则可以接受中断。</p>
+<p>在 <em>1.8</em> 之前，采用了 <strong>分段锁</strong> ； 而 <em>1.8</em> 中主要使用了 <strong>CAS</strong> 和 <strong>synchronized</strong> 来进行并发控制</p>
+<p><strong>CAS</strong> 没什么能说的，主要看一下分段锁 <em>Segment</em> </p>
+<p>这是一种 <em>ReentrantLock*，段的结构和 *HashMap</em> 类似，也是数组 + 链表。每一个段包含了 <em>HashEntry</em> 数组。当要对这个数组进行修改的时候，必须要先获得对应的锁(<em>Get</em>不需要获取锁，因为共享变量设置为了 <code>volatile</code>，除非读到的值是空的才会加锁重读)</p>
+<p><em>volatile</em> 底层使用了<strong>内存屏障</strong>来加以完成，实现对内存操作的顺序控制。</p>
+<blockquote>
+<p><em>ReentrantLock</em> 可重入锁，表示已经获取到这个资源的线程，可以再次进入。<em>Synchronized</em> 也是可以重入的。每一个线程进入一次，那么锁计数器+1.直到计数器为0的时候才释放</p>
+<ul>
+<li><em>ReentrantLock</em> 采用 <strong>JDK</strong> 实现；<em>Synchronized</em>则是 <strong>JVM</strong> 实现的</li>
+<li><em>Synchronized</em> 底层使用监视器（管程）实现，管程的本质就是操作系统的 <em>Mutex Lock</em>，需要牵涉到用户态和核心态的切换。 优化之前，性能比可重入锁差；</li>
+<li><em>1.6</em> 之后引入了<em>Synchronized</em> 轻量级锁和偏向锁，也是默认开启的。此外还有自适应自旋锁的优化</li>
+</ul>
+</blockquote>
+
                 </article>
                 <ul class="tags-postTags">
                     
@@ -273,6 +311,10 @@
 
     
     <nav id="gobottom" class="pagination">
+        
+        <a class="prev-post" title="Redis-基本数据结构" href="/2020/03/24/Redis-基本数据结构/">
+            ← Redis-基本数据结构
+        </a>
         
         <span class="prev-next-post">·</span>
         
@@ -303,7 +345,7 @@
         </a>
     </div>
     <div class="toc-main">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-集合类整理"><span class="toc-text">Java 集合类整理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-List-大类"><span class="toc-text">1. List 大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-ArrayList"><span class="toc-text">1.1 ArrayList</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-Vector"><span class="toc-text">1.2 Vector</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-LinkedList"><span class="toc-text">1.3 LinkedList</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-KV-大类"><span class="toc-text">2. KV 大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-HashMap"><span class="toc-text">2.1 HashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-1-put-添加-K-V-对"><span class="toc-text">2.1.1 put 添加 K,V 对</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-HashTable"><span class="toc-text">2.2 HashTable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-LinkedHashMap"><span class="toc-text">2.3 LinkedHashMap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-ConcurrentHashMap"><span class="toc-text">2.4 ConcurrentHashMap</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-SET-大类"><span class="toc-text">3. SET 大类</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-集合类整理"><span class="toc-text">Java 集合类整理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-List-大类"><span class="toc-text">1. List 大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-ArrayList"><span class="toc-text">1.1 ArrayList</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-Vector"><span class="toc-text">1.2 Vector</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-LinkedList"><span class="toc-text">1.3 LinkedList</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-KV-大类"><span class="toc-text">2. KV 大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-HashMap"><span class="toc-text">2.1 HashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-1-put-添加-K-V-对"><span class="toc-text">2.1.1 put 添加 K,V 对</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-HashTable"><span class="toc-text">2.2 HashTable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-LinkedHashMap"><span class="toc-text">2.3 LinkedHashMap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-TreeMap"><span class="toc-text">2.4 TreeMap</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-SET-大类"><span class="toc-text">3. SET 大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-HashSet"><span class="toc-text">3.1 HashSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-TreeSet"><span class="toc-text">3.2 TreeSet</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-线程安全大类"><span class="toc-text">4. 线程安全大类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-ConcurrentHashMap"><span class="toc-text">4.1 ConcurrentHashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Node定义"><span class="toc-text">Node定义</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
 </div>
 
@@ -405,6 +447,12 @@
       
       
       <li>
+        <a href="/2020/03/24/Redis-基本数据结构/">Redis-基本数据结构</a>
+      </li>
+      
+      
+      
+      <li>
         <a href="/2020/03/14/Java集合/">Java集合</a>
       </li>
       
@@ -415,10 +463,6 @@
       </li>
       
       
-      
-      <li>
-        <a href="/2020/02/17/TCP-IP-阅读笔记-2 加密/">TCP-IP-阅读笔记-2 加密算法</a>
-      </li>
       
       
       

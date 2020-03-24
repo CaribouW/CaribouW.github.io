@@ -201,7 +201,9 @@ static final int hash(Object key) {
 - `1.8` 中 , 链表和红黑树是交替使用的。
   - 当链表长度达到了 **8** 之后，会转换为红黑树
   - 当 `size` 是 **6** 之后，红黑树退化为链表
-  - 原因分析：红黑树**平均**查询效率 O(logN) , 链表 O(N) / 2。在长度是 **8** 的时候，红黑树时间复杂度为 3 , 链表是 *8 / 2 = 4* 。这时候使用红黑树是效率更高的。而另一边退化的阈值设置为 **6** , 主要是中间有一个 **7** 的 *gap* , 从而避免红黑树和链表直接的频繁切换
+  - 原因分析：
+    - 红黑树**平均**查询效率 O(logN) , 链表 O(N) / 2。在长度是 **8** 的时候，红黑树时间复杂度为 3 , 链表是 *8 / 2 = 4* 。这时候使用红黑树是效率更高的。而另一边退化的阈值设置为 **6** , 主要是中间有一个 **7** 的 *gap* , 从而避免红黑树和链表直接的频繁切换
+    - 当hashCode离散性很好的时候，树型bin用到的概率非常小，因为数据均匀分布在每个bin中，几乎不会有bin中链表长度会达到阈值。但是在随机hashCode下，离散性可能会变差，然而JDK又不能阻止用户实现这种不好的hash算法，因此就可能导致不均匀的数据分布。不过理想情况下随机hashCode算法下所有bin中节点的分布频率会遵循泊松分布，一个bin中链表长度达到8个元素的概率为0.00000006，几乎是不可能事件
 
 这里还有一个重要的调用函数 `resize()` 需要看一下
 
@@ -328,11 +330,84 @@ final Node<K,V>[] resize() {
 
 > 重点关注：afterNodeAccess()函数中，会修改modCount,因此当你正在accessOrder=true的模式下,迭代LinkedHashMap时，如果同时查询访问数据，也会导致fail-fast，因为迭代的顺序已经改变。
 
-#### 2.4 ConcurrentHashMap
+#### 2.4 TreeMap
 
-前面的几种都是非线程安全的类
+> LinkedHashMap保证数据可以保持插入顺序
+>
+> 而如果我们希望Map可以保持key的大小顺序的时候，我们就需要利用TreeMap了
 
-
+内部采用了红黑树，并不是基于 **hash** 来进行实现的
 
 ### 3. SET 大类
+
+#### 3.1 HashSet
+
+内部实现完全使用了 `HashMap`
+
+#### 3.2 TreeSet
+
+内部实现采用了 `TreeMap` ， 持有 `NavigableMap` 类型的引用
+
+### 4. 线程安全大类
+
+#### 4.1 ConcurrentHashMap
+
+> - *Key , Value* 不可以为空
+> - Hash计算如下 `(h ^ (h >>> 16)) & HASH_BITS`
+> - 链表 & 红黑树使用。链表进行尾插
+> - 链表和红黑树的临界值也是 **8**
+
+主要讲述一下和 *HashMap* 的不同
+
+##### Node定义
+
+在 *ConcurrentHashMap* 中，*Value,next* 都设置为了 `volatile` 内存可见
+
+```java
+private final Node<K,V>[] initTable() {
+        Node<K,V>[] tab; int sc;
+        while ((tab = table) == null || tab.length == 0) {
+            if ((sc = sizeCtl) < 0)
+                Thread.yield(); // lost initialization race; just spin
+          	//CAS控制
+            else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
+                try {
+                    if ((tab = table) == null || tab.length == 0) {
+                        int n = (sc > 0) ? sc : DEFAULT_CAPACITY;
+                        @SuppressWarnings("unchecked")
+                        Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n];
+                        table = tab = nt;
+                        sc = n - (n >>> 2);
+                    }
+                } finally {
+                    sizeCtl = sc;
+                }
+                break;
+            }
+        }
+        return tab;
+    }
+```
+
+**yield 和 sleep 的异同**
+
+1）yield, sleep 都能暂停当前线程，sleep 可以指定具体休眠的时间，而 yield 则依赖 CPU 的时间片划分。
+
+2）yield, sleep 两个在暂停过程中，如已经持有锁，则都不会释放锁资源。
+
+3）yield 不能被中断，而 sleep 则可以接受中断。
+
+在 *1.8* 之前，采用了 **分段锁** ； 而 *1.8* 中主要使用了 **CAS** 和 **synchronized** 来进行并发控制
+
+**CAS** 没什么能说的，主要看一下分段锁 *Segment* 
+
+这是一种 *ReentrantLock*，段的结构和 *HashMap* 类似，也是数组 + 链表。每一个段包含了 *HashEntry* 数组。当要对这个数组进行修改的时候，必须要先获得对应的锁(*Get*不需要获取锁，因为共享变量设置为了 `volatile`，除非读到的值是空的才会加锁重读)
+
+*volatile* 底层使用了**内存屏障**来加以完成，实现对内存操作的顺序控制。
+
+> *ReentrantLock* 可重入锁，表示已经获取到这个资源的线程，可以再次进入。*Synchronized* 也是可以重入的。每一个线程进入一次，那么锁计数器+1.直到计数器为0的时候才释放
+>
+> - *ReentrantLock* 采用 **JDK** 实现；*Synchronized*则是 **JVM** 实现的
+> - *Synchronized* 底层使用监视器（管程）实现，管程的本质就是操作系统的 *Mutex Lock*，需要牵涉到用户态和核心态的切换。 优化之前，性能比可重入锁差；
+> - *1.6* 之后引入了*Synchronized* 轻量级锁和偏向锁，也是默认开启的。此外还有自适应自旋锁的优化
 
