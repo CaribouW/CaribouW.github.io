@@ -1,0 +1,24 @@
+<article class="post">
+    <div class="post-title">
+        <h1 class="title"><%= page.title %></h2>
+    </div>
+    <div class="post-content">
+        <%- page.content %>
+    </div>
+    <div class="post-meta">
+        <%
+            const dat = date(page.date, "YYYY/MM/DD");
+            const chinese_date = to_chinese_date(dat);
+            const result = theme.to_chinese_date ? chinese_date : dat;
+        %>
+    <span class="post-time"><%- result %></span>
+    </div>
+</article>
+
+<div class="prev_next">
+    <%- partial('_partial/prev_next') %>
+</div>
+
+<div class="post-comment">
+    <%- partial('_partial/disqus') %>
+</div>
