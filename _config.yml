@@ -14,7 +14,7 @@
 # date: 
 # ---
 # Site
-title: Caribou
+title: Caribouのblog
 subtitle: Welcome
 description: Make Every Line Holy
 keywords:
@@ -50,7 +50,10 @@ post_asset_folder: false
 relative_link: false
 future: true
 highlight:
-  enable: false
+  enable: true
+  auto_detect: true
+  line_number: true
+  tab_replace:
 
 prism_plugin:
   mode: 'preprocess'    # realtime/preprocess

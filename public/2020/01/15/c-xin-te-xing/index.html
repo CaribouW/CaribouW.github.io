@@ -1,13 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>c++新特性 | Caribou</title><meta name="keywords" content="整理"><meta name="author" content="caribou"><meta name="copyright" content="caribou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>c++新特性 | Caribouのblog</title><meta name="keywords" content="整理"><meta name="author" content="caribou"><meta name="copyright" content="caribou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
 <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta property="og:type" content="article">
 <meta property="og:title" content="c++新特性">
 <meta property="og:url" content="http://caribou.top/2020/01/15/c-xin-te-xing/index.html">
-<meta property="og:site_name" content="Caribou">
+<meta property="og:site_name" content="Caribouのblog">
 <meta property="og:description" content="虽说是新特性，但是C++ 11 &amp; 14 已经推出了将近10年了.这次就好好整理一下">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80">
 <meta property="article:published_time" content="2020-01-15T02:14:27.000Z">
-<meta property="article:modified_time" content="2020-10-21T10:39:07.041Z">
+<meta property="article:modified_time" content="2020-10-22T02:12:58.117Z">
 <meta property="article:author" content="caribou">
 <meta property="article:tag" content="整理">
 <meta name="twitter:card" content="summary">
@@ -18,7 +18,7 @@
   localSearch: undefined,
   translate: undefined,
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -80,7 +80,7 @@ var saveToLocal = {
   isHome: false,
   isHighlightShrink: true,
   isSidebar: true,
-  postUpdate: '2020-10-21 18:39:07'
+  postUpdate: '2020-10-22 10:12:58'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -142,51 +142,59 @@ var saveToLocal = {
     if (t === 'dark') activateDarkMode()
     else if (t === 'light') activateLightMode()
   }
-})()</script><!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Caribou" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://images.unsplash.com/photo-1569525987258-6aa03a5e4926?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2132&amp;q=80" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">9</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#What%E2%80%99s-new-in-C-11"><span class="toc-number">1.</span> <span class="toc-text">What’s new in C++ 11?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#storage-duration-specifier"><span class="toc-number">1.1.</span> <span class="toc-text">storage duration specifier</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Variadic-templates"><span class="toc-number">1.2.</span> <span class="toc-text">Variadic templates</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pack-Expansion"><span class="toc-number">1.2.1.</span> <span class="toc-text">Pack Expansion</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Move-semantics"><span class="toc-number">1.3.</span> <span class="toc-text">Move semantics</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">右值引用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">移动语义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91"><span class="toc-number">1.3.3.</span> <span class="toc-text">完美转发</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Value-Category"><span class="toc-number">1.4.</span> <span class="toc-text">Value Category</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=967&amp;q=80)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Caribou</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">c++新特性</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-01-15T02:14:27.000Z" title="发表于 2020-01-15 10:14:27">2020-01-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-21T10:39:07.041Z" title="更新于 2020-10-21 18:39:07">2020-10-21</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">769</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="What’s-new-in-C-11"><a href="#What’s-new-in-C-11" class="headerlink" title="What’s new in C++ 11?"></a>What’s new in C++ 11?</h2><h3 id="storage-duration-specifier"><a href="#storage-duration-specifier" class="headerlink" title="storage duration specifier"></a>storage duration specifier</h3><p>多个C++版本都对变量存储时间的定义有严格的说明</p>
-<!-- hexo-inject:begin --><!-- hexo-inject:end --><ul>
-<li><p><code>auto</code> - <em>automatic</em> storage duration.</p>
+})()</script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Caribouのblog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://images.unsplash.com/photo-1569525987258-6aa03a5e4926?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2132&amp;q=80" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">17</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">9</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#whats-new-in-c-11"><span class="toc-number">1.</span> <span class="toc-text"> What’s new in C++ 11?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#storage-duration-specifier"><span class="toc-number">1.1.</span> <span class="toc-text"> storage duration specifier</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#variadic-templates"><span class="toc-number">1.2.</span> <span class="toc-text"> Variadic templates</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pack-expansion"><span class="toc-number">1.2.1.</span> <span class="toc-text"> Pack Expansion</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#move-semantics"><span class="toc-number">1.3.</span> <span class="toc-text"> Move semantics</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 右值引用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 移动语义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91"><span class="toc-number">1.3.3.</span> <span class="toc-text"> 完美转发</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#value-category"><span class="toc-number">1.4.</span> <span class="toc-text"> Value Category</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=967&amp;q=80)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Caribouのblog</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">c++新特性</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-01-15T02:14:27.000Z" title="发表于 2020-01-15 10:14:27">2020-01-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-22T02:12:58.117Z" title="更新于 2020-10-22 10:12:58">2020-10-22</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">769</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="whats-new-in-c-11"><a class="markdownIt-Anchor" href="#whats-new-in-c-11"></a> What’s new in C++ 11?</h2>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><h3 id="storage-duration-specifier"><a class="markdownIt-Anchor" href="#storage-duration-specifier"></a> storage duration specifier</h3>
+<p>多个C++版本都对变量存储时间的定义有严格的说明</p>
+<ul>
+<li>
+<p><code>auto</code> - <em>automatic</em> storage duration.</p>
 </li>
-<li><p><code>register</code> - <em>automatic</em> storage duration. Also hints to the compiler to place the object in the processor’s register. (deprecated) ——<em>since C++ 17</em></p>
+<li>
+<p><code>register</code> - <em>automatic</em> storage duration. Also hints to the compiler to place the object in the processor’s register. (deprecated) ——<em>since C++ 17</em></p>
 </li>
-<li><p><code>static</code> - <em>static</em> or <em>thread</em> storage duration and <em>internal</em> linkage</p>
+<li>
+<p><code>static</code> - <em>static</em> or <em>thread</em> storage duration and <em>internal</em> linkage</p>
 </li>
-<li><p><code>extern</code> - <em>static</em> or <em>thread</em> storage duration and <em>external</em> linkage.</p>
+<li>
+<p><code>extern</code> - <em>static</em> or <em>thread</em> storage duration and <em>external</em> linkage.</p>
 </li>
-<li><p><code>thread_local</code> - <em>thread</em> storage duration</p>
+<li>
+<p><code>thread_local</code> - <em>thread</em> storage duration</p>
 <p>The <code>thread_local</code> keyword is only allowed for objects declared at namespace scope, objects declared at block scope, and static data members. It indicates that the object has <strong>thread storage duration</strong>. It can be combined with <code>static</code> or <code>extern</code> to specify internal or external linkage (except for static data members which always have external linkage), respectively, but that additional <code>static</code> doesn’t affect the storage duration.</p>
 </li>
-<li><p><code>mutable</code> - does not affect storage duration or linkage</p>
+<li>
+<p><code>mutable</code> - does not affect storage duration or linkage</p>
 <p>注意：<code>mutable</code> 主要是标识 <strong>const对象</strong> 中某些可变的成员，实现了从二进制的物理 <strong>const</strong> 到逻辑 <strong>const</strong> (外观不变)</p>
 </li>
 </ul>
-<h3 id="Variadic-templates"><a href="#Variadic-templates" class="headerlink" title="Variadic templates"></a>Variadic templates</h3><p>可变类模板，在 <code>c++ reference</code> 里面以 <em>parameter pack</em> 来代替</p>
-<pre class=" language-cpp"><code class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> Types<span class="token operator">></span>            <span class="token comment" spellcheck="true">//class ... Types 是一个 pack 的声明    </span>
-<span class="token keyword">void</span> <span class="token function">f</span><span class="token punctuation">(</span>Types<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>            <span class="token comment" spellcheck="true">//Types... args 是</span></code></pre>
-<h4 id="Pack-Expansion"><a href="#Pack-Expansion" class="headerlink" title="Pack Expansion"></a>Pack Expansion</h4><ul>
+<h3 id="variadic-templates"><a class="markdownIt-Anchor" href="#variadic-templates"></a> Variadic templates</h3>
+<p>可变类模板，在 <code>c++ reference</code> 里面以 <em>parameter pack</em> 来代替</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;class... Types&gt;			<span class="comment">//class ... Types 是一个 pack 的声明	</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(Types... args)</span> </span>&#123;&#125;			<span class="comment">//Types... args 是</span></span><br></pre></td></tr></table></figure>
+<h4 id="pack-expansion"><a class="markdownIt-Anchor" href="#pack-expansion"></a> Pack Expansion</h4>
+<ul>
 <li><code>&amp;args...</code> 代表的是参数扩展</li>
 <li><code>&amp;args</code>代表的是 <em>pack pattern</em> 本身</li>
 </ul>
-<h3 id="Move-semantics"><a href="#Move-semantics" class="headerlink" title="Move semantics"></a>Move semantics</h3><blockquote>
+<h3 id="move-semantics"><a class="markdownIt-Anchor" href="#move-semantics"></a> Move semantics</h3>
+<blockquote>
 <p><strong>凡是取地址（<code>&amp;</code>）操作可以成功的都是左值，其余都是右值</strong></p>
 <ul>
 <li>等号左边的不一定是左值——可以通过操作符重载来让左部变成 <strong>右值</strong></li>
 </ul>
 </blockquote>
-<h4 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h4><p>我们之前常见的都是 <strong>左值引用</strong>，指的是我们只能够将 <strong>左值</strong> 赋给一个引用。</p>
+<h4 id="右值引用"><a class="markdownIt-Anchor" href="#右值引用"></a> 右值引用</h4>
+<p>我们之前常见的都是 <strong>左值引用</strong>，指的是我们只能够将 <strong>左值</strong> 赋给一个引用。</p>
 <ul>
-<li><p><code>int&amp; a = 1</code> 就是非法的。而我们也可以 <code>int const&amp; i = 42;</code> 来进行一个 <em>tricky</em> 的躲避</p>
-<p>在 <code>c++11</code>中允许了右值引用的出现</p>
-<pre><code>int&amp;&amp; a = 3;</code></pre>
-</li>
+<li><code>int&amp; a = 1</code> 就是非法的。而我们也可以 <code>int const&amp; i = 42;</code> 来进行一个 <em>tricky</em> 的躲避</li>
 </ul>
-<h4 id="移动语义"><a href="#移动语义" class="headerlink" title="移动语义"></a>移动语义</h4><p>我们在进行 <code>Test(const Test&amp; test)</code> 拷贝构造函数的执行过程中，会造成很多的拷贝浪费。当单独的一次拷贝构造函数 (特别是对指针数组这些资源)过程消耗特别大的时候，对于性能来说是很低的。</p>
+<p>在 <code>c++11</code>中允许了右值引用的出现</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span>&amp;&amp; a = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="移动语义"><a class="markdownIt-Anchor" href="#移动语义"></a> 移动语义</h4>
+<p>我们在进行 <code>Test(const Test&amp; test)</code> 拷贝构造函数的执行过程中，会造成很多的拷贝浪费。当单独的一次拷贝构造函数 (特别是对指针数组这些资源)过程消耗特别大的时候，对于性能来说是很低的。</p>
 <p>那么 <code>c++11</code>标准给出了 <strong>移动拷贝构造函数</strong> 和 <strong>移动赋值操作符重载</strong>。此外，还支持 <code>std::move()</code>来强制性让 <strong>左值转化为右值</strong></p>
-<h4 id="完美转发"><a href="#完美转发" class="headerlink" title="完美转发"></a>完美转发</h4><p>我们想要实现</p>
+<h4 id="完美转发"><a class="markdownIt-Anchor" href="#完美转发"></a> 完美转发</h4>
+<p>我们想要实现</p>
 <blockquote>
 <p>多级函数调用过程中</p>
 <ul>
@@ -194,27 +202,54 @@ var saveToLocal = {
 <li>如果变量是右值，那么它作为其他函数的参数的时候也应该是 <strong>右值</strong></li>
 </ul>
 </blockquote>
-<pre class=" language-cpp"><code class="language-cpp"><span class="token keyword">template</span> <span class="token operator">&lt;</span><span class="token keyword">typename</span> T<span class="token operator">></span>
-<span class="token keyword">void</span> <span class="token function">func</span><span class="token punctuation">(</span>T t<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-    cout <span class="token operator">&lt;&lt;</span> <span class="token string">"in func"</span> <span class="token operator">&lt;&lt;</span> endl<span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-
-<span class="token keyword">template</span> <span class="token operator">&lt;</span><span class="token keyword">typename</span> T<span class="token operator">></span>
-<span class="token keyword">void</span> <span class="token function">relay</span><span class="token punctuation">(</span>T<span class="token operator">&amp;&amp;</span> t<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-    cout <span class="token operator">&lt;&lt;</span> <span class="token string">"in relay"</span> <span class="token operator">&lt;&lt;</span> endl<span class="token punctuation">;</span>
-    <span class="token function">func</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-    <span class="token function">relay</span><span class="token punctuation">(</span><span class="token function">Test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;in func&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">relay</span><span class="params">(T&amp;&amp; t)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;in relay&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    func(t);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    relay(Test());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面这个例子就是一个 <strong>反例</strong>。我们在传入 <code>func(t)</code> 的时候，其实调用了 <strong>拷贝构造函数</strong> (因为编译器把 <strong>t</strong> 当做了一个 <strong>左值</strong>)</p>
 <blockquote>
 <p><code>std::forward&lt;T&gt;()</code> ，能够保留参数的左右值类型</p>
 </blockquote>
-<h3 id="Value-Category"><a href="#Value-Category" class="headerlink" title="Value Category"></a>Value Category</h3><p>不止左值右值那么简单</p>
+<h3 id="value-category"><a class="markdownIt-Anchor" href="#value-category"></a> Value Category</h3>
+<p>不止左值右值那么简单</p>
 <blockquote>
 <p>Cpp reference:</p>
 <p>Each C++ <a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/expressions">expression</a> (an operator with its operands, a literal, a variable name, etc.) is characterized by two independent properties: a <em>type</em> and a <em>value category</em>. Each expression has some non-reference type, and each expression belongs to exactly one of the three primary value categories: <em>prvalue</em>, <em>xvalue</em>, and <em>lvalue</em>.</p>
 </blockquote>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">caribou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://caribou.top/2020/01/15/c-xin-te-xing/">http://caribou.top/2020/01/15/c-xin-te-xing/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://caribou.top" target="_blank">Caribou</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B4%E7%90%86/">整理</a></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=967&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/01/15/bei-bao-wen-ti/"><img class="prev-cover" src="https://images.unsplash.com/photo-1581463455583-40abcfc90be7?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1234&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">背包问题</div></div></a></div><div class="next-post pull-right"><a href="/2019/12/22/za-tan-ji-xie-tie/"><img class="next-cover" src="https://images.unsplash.com/photo-1526285592708-e83cf5365929?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">杂谈-沉思帖</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By caribou</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">caribou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://caribou.top/2020/01/15/c-xin-te-xing/">http://caribou.top/2020/01/15/c-xin-te-xing/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://caribou.top" target="_blank">Caribouのblog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B4%E7%90%86/">整理</a></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1565433435379-877a403f0f09?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=967&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/01/15/bei-bao-wen-ti/"><img class="prev-cover" src="https://images.unsplash.com/photo-1581463455583-40abcfc90be7?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1234&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">背包问题</div></div></a></div><div class="next-post pull-right"><a href="/2019/12/22/za-tan-ji-xie-tie/"><img class="next-cover" src="https://images.unsplash.com/photo-1526285592708-e83cf5365929?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">杂谈-沉思帖</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By caribou</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css"><script>$(function () {
+  $('span.katex-display').wrap('<div class="katex-wrap"></div>')
+})</script><script>function loadValine () {
+  function initValine () {
+    const initData = {
+      el: '#vcomment',
+      appId: '98HN76q5GCACWRILBontm0RH-gzGzoHsz',
+      appKey: 'GbYo6jICDSvtwQoHopR4O0xR',
+      placeholder: '留下你的脚印',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
