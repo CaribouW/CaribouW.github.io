@@ -3,6 +3,7 @@ title: 初探Anna
 date: 2020-02-17 11:05:56
 tags: 笔记
 cover_img: https://images.unsplash.com/photo-1551342909-187e24a5797d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80
+cover: https://images.unsplash.com/photo-1551342909-187e24a5797d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80
 feature_img: https://images.unsplash.com/photo-1517999349371-c43520457b23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80
 description: 由伯克利开发的新一代数据库引擎
 keywords:

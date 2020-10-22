@@ -2,10 +2,10 @@
 title: cmake学习笔记
 date: 2020-02-18 09:12:40
 tags:
-cover_img:
 feature_img:
 description:
 keywords:
+cover: https://images.unsplash.com/photo-1603199477811-71c45c02f10d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80
 ---
 
 ## Cmake学习笔记

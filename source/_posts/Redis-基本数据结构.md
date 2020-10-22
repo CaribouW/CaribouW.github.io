@@ -3,6 +3,7 @@ title: Redis-基本数据结构
 date: 2020-03-24 10:03:53
 tags: 笔记
 cover_img: https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80
+cover: https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80
 feature_img: https://images.unsplash.com/photo-1518976024611-28bf4b48222e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=632&q=80
 description:
 keywords: Redis

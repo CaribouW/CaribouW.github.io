@@ -3,6 +3,7 @@ title: Java集合
 date: 2020-03-14 17:26:21
 tags: 笔记
 cover_img: https://images.unsplash.com/photo-1496507161348-aeec0403f141?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80
+cover: https://images.unsplash.com/photo-1496507161348-aeec0403f141?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80
 feature_img: https://images.unsplash.com/photo-1517958911667-09c05f6cd698?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80
 description:
 keywords: 笔记
