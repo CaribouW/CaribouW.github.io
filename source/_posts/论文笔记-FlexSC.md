@@ -11,7 +11,7 @@ keywords:
 
 系统调用采用同步的机制，在用户态转移到内核态的过程中，需要把当前上下文保存，但是其中的模式切换成本，与间接的处理器上下文数据污染（影响局部性 *locality*），会对系统调用造成比较大的负面影响
 
-![image.png](https://pic.baixiongz.com/uploads/2020/12/01/4cda98ba91fc6.png)
+![image.png](https://i.loli.net/2020/12/20/5jrZnDoWebTua9s.png)
 
 文中给出的 *proposal* : ***exception-less system call***，在请求内核服务时，不需要使用同步处理器异常。实现过程中，(*invocation stage*)系统调用通过把内核请求，以普通的内存存储操作写入到一个预留的系统调用页 (*syscall page*)。(*execution stage*)随后的系统调用执行采用 **异步** 的方式 (*special in-kernel **syscall threads***) ，将结果异步载入 *syscall page*
 
@@ -37,7 +37,7 @@ keywords:
 
 进入内核态执行时，处理器的L1缓存数据、指令缓存、TLB、分支预测表，以及L2缓存，都会因为系统调用而被污染，从而在返回用户态之后，极大地影响用户态程序执行速度
 
-<img src="https://pic.baixiongz.com/uploads/2020/12/01/31b9a11edca0f.png" alt="image.png" style="zoom:80%;" />
+![image.png](https://i.loli.net/2020/12/20/vfRDmGitJOsWB6F.png)
 
 
 
@@ -53,7 +53,7 @@ keywords:
 
 
 
-<img src="https://pic.baixiongz.com/uploads/2020/12/01/4ca710afbb03f.png" alt="image.png" style="zoom:67%;" />
+<img src="https://i.loli.net/2020/12/20/vFbzLq7xU2ZRiAH.png" alt="image.png" style="zoom: 67%;" />
 
 实验结果解读：
 
@@ -64,7 +64,7 @@ keywords:
 
  IPC受syscall频率的影响。可以见到，当系统调用频繁时，内核的状态也能够比较好地被保持。由此看出syscall对 user / kernel mode均会造成局部性的影响
 
-<img src="https://pic.baixiongz.com/uploads/2020/12/01/2bfae641e2bf7.png" alt="image.png" style="zoom:67%;" />
+<img src="https://i.loli.net/2020/12/20/qDFpQv7kRSaLEnd.png" alt="image.png" style="zoom:67%;" />
 
 
 
@@ -87,7 +87,7 @@ keywords:
 
 > 64-bit系统中，每一个 *entry* 占用 **64 bytes**
 
-![image.png](https://pic.baixiongz.com/uploads/2020/12/02/b57c2980ec33c.png)
+![image.png](https://i.loli.net/2020/12/20/Nv5WgtnKT8qSreu.png)
 
 在调用 *exception-less syscall* 时，用户线程需要找到一个 *status = free* 的 *entry*，随后将必要的参数写入到这个入口。写入完成后，*status* 置为 *submitted* 。随后用户线程可以执行自己的代码，后续需要check这个*status* 是否为 *done*，表明系统调用是否完成。若完成，那么用户线程设置 *status* 为 *free*
 
@@ -99,7 +99,7 @@ keywords:
 
 不同于 *exception-based syscall* ，*exception-less syscall* 采用一种 **异步** 的策略，调用时，用户线程写入 *syscall page*；执行*syscall* 时，***syscall thread*** (必在内核态) 从 *syscall page* 拉取系统调用请求
 
-<img src="https://pic.baixiongz.com/uploads/2020/12/02/895a2f4c1df9a.png" alt="image.png" style="zoom:87%;" />
+<img src="https://i.loli.net/2020/12/20/2F4gn3JqKUo1pGX.png" alt="image.png" style="zoom:80%;" />
 
 - 用户线程只在无法进行更多的执行，才会唤醒系统调用线程(*syscall thread*) ——保证时间局部性
 - 系统调用线程可以被调度——保证空间局部性
