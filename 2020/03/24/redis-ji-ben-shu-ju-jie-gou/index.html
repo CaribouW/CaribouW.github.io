@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redis-基本数据结构 | Caribouのblog</title><meta name="keywords" content="Redis"><meta name="author" content="caribou"><meta name="copyright" content="caribou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Redis 基本数据结构  Redis 的数据类型有五大类，分别是 列表、字符串、哈希表、有序集合、无序集合 字符串底层：SDS 列表底层：链表或者是 ziplist 压缩列表 哈希对象：ziplist 或者是 hashtable 集合：intset 或 hashtable 有序集合：ziplist 或 skiplist &amp; dictionary  底层的数据结构实现讲解  简单动态字符">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta property="og:type" content="article">
+<meta property="og:title" content="Redis-基本数据结构">
+<meta property="og:url" content="http://example.com/2020/03/24/redis-ji-ben-shu-ju-jie-gou/index.html">
+<meta property="og:site_name" content="Caribouのblog">
+<meta property="og:description" content="Redis 基本数据结构  Redis 的数据类型有五大类，分别是 列表、字符串、哈希表、有序集合、无序集合 字符串底层：SDS 列表底层：链表或者是 ziplist 压缩列表 哈希对象：ziplist 或者是 hashtable 集合：intset 或 hashtable 有序集合：ziplist 或 skiplist &amp; dictionary  底层的数据结构实现讲解  简单动态字符">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80">
+<meta property="article:published_time" content="2020-03-24T02:03:53.000Z">
+<meta property="article:modified_time" content="2021-06-18T01:29:06.078Z">
+<meta property="article:author" content="caribou">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/03/24/redis-ji-ben-shu-ju-jie-gou/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.4.2',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: true
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2021-06-18 09:29:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Caribouのblog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://images.unsplash.com/photo-1569525987258-6aa03a5e4926?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2132&amp;q=80" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">17</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">9</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text"> Redis 基本数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2-sds"><span class="toc-number">1.1.</span> <span class="toc-text"> 简单动态字符串 SDS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%89%E5%8F%8A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 涉及数据结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E9%97%B4%E9%A2%84%E5%8A%A0%E8%BD%BD%E7%AD%96%E7%95%A5"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 空间预加载策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A9%BA%E9%97%B4%E6%87%92%E9%87%8A%E6%94%BE%E7%AD%96%E7%95%A5"><span class="toc-number">1.1.3.</span> <span class="toc-text"> 空间懒释放策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8"><span class="toc-number">1.1.4.</span> <span class="toc-text"> 二进制安全</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%93%BE%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text"> 链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E5%85%B8-hash"><span class="toc-number">1.3.</span> <span class="toc-text"> 字典 hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.</span> <span class="toc-text"> 主要数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 哈希算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%8D%E5%93%88%E5%B8%8C"><span class="toc-number">1.4.1.1.</span> <span class="toc-text"> 再哈希</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B8%90%E8%BF%9B%E5%BC%8F%E5%86%8D%E5%93%88%E5%B8%8C"><span class="toc-number">1.4.1.2.</span> <span class="toc-text"> 渐进式再哈希</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E5%90%88"><span class="toc-number">1.5.</span> <span class="toc-text"> 集合</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88key%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.1.</span> <span class="toc-text"> 跳表——有序集合key的底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E8%8A%82%E7%82%B9%E5%AE%9A%E4%B9%89"><span class="toc-number">1.5.1.1.</span> <span class="toc-text"> 跳表节点定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E5%AE%9A%E4%B9%89"><span class="toc-number">1.5.1.2.</span> <span class="toc-text"> 跳表定义</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#intset-%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88"><span class="toc-number">1.5.2.</span> <span class="toc-text"> Intset 整数集合</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.5.2.1.</span> <span class="toc-text"> 数据结构</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ziplist-%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8"><span class="toc-number">1.6.</span> <span class="toc-text"> Ziplist 压缩列表</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Caribouのblog</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Redis-基本数据结构</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-03-24T02:03:53.000Z" title="发表于 2020-03-24 10:03:53">2020-03-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-06-18T01:29:06.078Z" title="更新于 2021-06-18 09:29:06">2021-06-18</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="redis-基本数据结构"><a class="markdownIt-Anchor" href="#redis-基本数据结构"></a> Redis 基本数据结构</h2>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><blockquote>
+<p><em>Redis</em> 的数据类型有五大类，分别是 <strong>列表、字符串、哈希表、有序集合、无序集合</strong></p>
+<p>字符串底层：SDS</p>
+<p>列表底层：链表或者是 <em>ziplist</em> 压缩列表</p>
+<p>哈希对象：ziplist 或者是 hashtable</p>
+<p>集合：<em>intset</em> 或 <em>hashtable</em></p>
+<p>有序集合：<em>ziplist</em> 或 <em>skiplist &amp; dictionary</em></p>
+</blockquote>
+<p>底层的数据结构实现讲解</p>
+<h3 id="简单动态字符串-sds"><a class="markdownIt-Anchor" href="#简单动态字符串-sds"></a> 简单动态字符串 SDS</h3>
+<h4 id="涉及数据结构"><a class="markdownIt-Anchor" href="#涉及数据结构"></a> 涉及数据结构</h4>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// buf 中已占用空间的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// buf 中剩余可用空间的长度</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 数据空间</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="空间预加载策略"><a class="markdownIt-Anchor" href="#空间预加载策略"></a> 空间预加载策略</h4>
+<p>当我们进行 <code>sdscat(sds s1 , const char* t)</code> 的时候，<strong>可能</strong> 会引发空间重新分配</p>
+<ul>
+<li>如果 <strong>free space</strong> 足够，那么不进行分配</li>
+<li>如果不够，看 <strong>t</strong> 的大小是不是超过 1M (<code>SDS_MAX_PREALLOC</code>- <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1024</mn><mo>×</mo><mn>1024</mn></mrow><annotation encoding="application/x-tex">1024\times 1024</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">2</span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">2</span><span class="mord">4</span></span></span></span>)
+<ul>
+<li>超过 <strong>1M</strong> ，直接 <code>newLen + SDS_MAX_PREALLOC</code></li>
+<li>否则 <code>newLen = newLen * 2</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">sds <span class="title">sdsMakeRoomFor</span><span class="params">(sds s, <span class="keyword">size_t</span> addlen)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> *<span class="title">sh</span>, *<span class="title">newsh</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取 s 目前的空余空间长度</span></span><br><span class="line">    <span class="keyword">size_t</span> <span class="built_in">free</span> = sdsavail(s);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">size_t</span> len, newlen;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// s 目前的空余空间已经足够，无须再进行扩展，直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">free</span> &gt;= addlen) <span class="keyword">return</span> s;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取 s 目前已占用空间的长度</span></span><br><span class="line">    len = sdslen(s);</span><br><span class="line">    sh = (<span class="keyword">void</span>*) (s-(<span class="keyword">sizeof</span>(struct sdshdr)));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// s 最少需要的长度</span></span><br><span class="line">    newlen = (len+addlen);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 根据新长度，为 s 分配新空间所需的大小</span></span><br><span class="line">    <span class="keyword">if</span> (newlen &lt; SDS_MAX_PREALLOC)</span><br><span class="line">        <span class="comment">// 如果新长度小于 SDS_MAX_PREALLOC </span></span><br><span class="line">        <span class="comment">// 那么为它分配两倍于所需长度的空间</span></span><br><span class="line">        newlen *= <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">// 否则，分配长度为目前长度加上 SDS_MAX_PREALLOC</span></span><br><span class="line">        newlen += SDS_MAX_PREALLOC;</span><br><span class="line">    <span class="comment">// T = O(N)</span></span><br><span class="line">    newsh = zrealloc(sh, <span class="keyword">sizeof</span>(struct sdshdr)+newlen+<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 内存不足，分配失败，返回</span></span><br><span class="line">    <span class="keyword">if</span> (newsh == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新 sds 的空余长度</span></span><br><span class="line">    newsh-&gt;<span class="built_in">free</span> = newlen - len;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回 sds</span></span><br><span class="line">    <span class="keyword">return</span> newsh-&gt;buf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="空间懒释放策略"><a class="markdownIt-Anchor" href="#空间懒释放策略"></a> 空间懒释放策略</h4>
+<p><code>sdstrim(sds s, const char*)</code> 会削减掉 <strong>s</strong> 两边的字符</p>
+<p>去掉之后，我们不改变 <strong>len</strong> , 而是作为 <strong>free space</strong> 进行了保留</p>
+<h4 id="二进制安全"><a class="markdownIt-Anchor" href="#二进制安全"></a> 二进制安全</h4>
+<p>对于普通的 <strong>C</strong> 字符串，由于是按照空串 <code>\0</code> 来作为结束标志</p>
+<p>而对于 <strong>SDS</strong> ，它使用的 <strong>len</strong> 字段就可以避免这一点</p>
+<h3 id="链表"><a class="markdownIt-Anchor" href="#链表"></a> 链表</h3>
+<p>基本的数据结构——双向链表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 双端链表节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 前置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 后置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 节点的值</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line"></span><br><span class="line">&#125; listNode;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 双端链表迭代器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listIter</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// **当前**迭代到的节点</span></span><br><span class="line">    listNode *next;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 迭代的方向</span></span><br><span class="line">    <span class="keyword">int</span> direction;</span><br><span class="line"></span><br><span class="line">&#125; listIter;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 双端链表结构</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 表头节点</span></span><br><span class="line">    listNode *head;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 表尾节点</span></span><br><span class="line">    listNode *tail;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 节点值复制函数</span></span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 节点值释放函数</span></span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 节点值对比函数</span></span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 链表所包含的节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line"></span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看出，<strong>Redis</strong>中的list采取了双端链表来进行实现。结构体内部包含了：</p>
+<ul>
+<li>头结点、尾结点</li>
+<li>链表长度</li>
+<li>三个支持多态的函数指针</li>
+</ul>
+<h3 id="字典-hash"><a class="markdownIt-Anchor" href="#字典-hash"></a> 字典 hash</h3>
+<p>Redis中称作 <strong>字典</strong>。它的实现上都是采取了 <strong>链地址法</strong> 的哈希表结构。</p>
+<blockquote>
+<p><em>redis</em> 后续还引入了 <em>zipmap</em> 来作为 <code>字符串到字符串</code>的小<em>hash</em> 底层数据结构</p>
+</blockquote>
+<h3 id="主要数据结构"><a class="markdownIt-Anchor" href="#主要数据结构"></a> 主要数据结构</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 哈希表节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 键</span></span><br><span class="line">    <span class="keyword">void</span> *key;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 值</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="keyword">void</span> *val;</span><br><span class="line">        <span class="keyword">uint64_t</span> u64;</span><br><span class="line">        <span class="keyword">int64_t</span> s64;</span><br><span class="line">    &#125; v;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 指向下个哈希表节点，形成链表</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line"></span><br><span class="line">&#125; dictEntry;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 哈希表</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 每个字典都使用**两个**哈希表，从而实现渐进式 rehash 。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 哈希表数组</span></span><br><span class="line">    dictEntry **table;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 哈希表大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 哈希表大小掩码，用于计算索引值</span></span><br><span class="line">    <span class="comment">// 总是等于 size - 1</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 该哈希表已有节点的数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line"></span><br><span class="line">&#125; dictht;</span><br><span class="line"><span class="comment">//=======================================</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 字典</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 类型特定函数</span></span><br><span class="line">    dictType *type;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 私有数据</span></span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 哈希表</span></span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// rehash 索引</span></span><br><span class="line">    <span class="comment">// 当 rehash 不在进行时，值为 -1</span></span><br><span class="line">    <span class="keyword">int</span> rehashidx; <span class="comment">/* rehashing not in progress if rehashidx == -1 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 目前正在运行的安全迭代器的数量</span></span><br><span class="line">    <span class="keyword">int</span> iterators; <span class="comment">/* number of iterators currently running */</span></span><br><span class="line"></span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+<p>可以看出，<strong>Entry</strong> 作为节点，维护了 <code>K,V</code> 关系；哈希表维护了基本的<strong>哈希表大小</strong>和<strong>已占用Hash数量</strong>。</p>
+<h4 id="哈希算法"><a class="markdownIt-Anchor" href="#哈希算法"></a> 哈希算法</h4>
+<p>根据 <code>hashFunc(key)</code> 可以得到哈希值 <strong>hash</strong> 。但是这个值往往很大，需要规整到 <code>[0,size-1]</code> 范围内，所以我们使用 <code>hash &amp; mask</code> 来进行 <strong>模计算</strong>。这里的 <strong>mask</strong> 为 <code>size - 1</code></p>
+<h5 id="再哈希"><a class="markdownIt-Anchor" href="#再哈希"></a> 再哈希</h5>
+<blockquote>
+<p>大多数的哈希表实现思路类似——<strong>size</strong>都需要是 <strong>2的幂次</strong>，便于进行和掩码的与运算</p>
+</blockquote>
+<p><code>dict</code> 结构中，采用了 <code>dictht ht[2];</code> 两个哈希表来进行。一般 <code>ht[0]</code> 存储数据，当要进行再哈希的时候，先给 <code>ht[1]</code> 分配一定的空间，随后把 <code>ht[0]</code> 的数据再哈希到 <code>ht[1]</code> 当中。完成之后，释放 <code>ht[0]</code> 空间，调换两个指针 (类似<em>JVM</em> <em>survivor0，1</em> 的拷贝)</p>
+<ul>
+<li>如果进行的是扩展操作，那么<em>rehash</em> 之后的大小是 大于等于 <code>ht[0].used * 2</code> 的第一个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span>  (和 <em>Java</em>的实现有点区别，<em>redis</em> 这里是针对已经使用的大小乘以二，然后再找到不小于这个数的第一个二的次幂)</li>
+<li>如果是伸缩操作，那么 <em>rehash</em> 之后的大小是 大于等于  <code>ht[0].used</code> 的第一个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span></li>
+</ul>
+<p>随后，我们进行一个再哈希 (也就是根据新的大小重新分配 <code>K,V</code> ) ，放置到 <code>ht[1]</code>。随后互换两者指针即可。</p>
+<h5 id="渐进式再哈希"><a class="markdownIt-Anchor" href="#渐进式再哈希"></a> 渐进式再哈希</h5>
+<p>再哈希时的数据拷贝工作是最耗时的。Redis 采用 <strong>rehashidx</strong> 来进行渐进式的处理。</p>
+<ul>
+<li>初始值设置为0，表示再哈希开始</li>
+<li>每一次对哈希表的增删改查，都会随即触发再哈希。
+<ul>
+<li>仅仅再哈希 <strong>rehashidx</strong> 索引对应的节点</li>
+<li>此时的增删改查涉及到两个哈希表</li>
+</ul>
+</li>
+<li>完成所有的再哈希之后，设置为 -1，表示完成</li>
+</ul>
+<blockquote>
+<p>通过将再哈希的行为，均摊到增删改查当中，避免了集中式的再哈希操作</p>
+</blockquote>
+<h3 id="集合"><a class="markdownIt-Anchor" href="#集合"></a> 集合</h3>
+<h4 id="跳表有序集合key的底层实现"><a class="markdownIt-Anchor" href="#跳表有序集合key的底层实现"></a> 跳表——有序集合key的底层实现</h4>
+<blockquote>
+<p>使用于有序集合元素数量大，或者元素成员是字符串类型</p>
+<p>跳表还使用在了集群节点中的内部数据结构</p>
+</blockquote>
+<h5 id="跳表节点定义"><a class="markdownIt-Anchor" href="#跳表节点定义"></a> 跳表节点定义</h5>
+<p>每一个节点内部，除了基本的数据 <code>robj</code> ，还包含了后退指针，以及一个 <code>level</code> 数组</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 成员对象</span></span><br><span class="line">    robj *obj;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分值</span></span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 后退指针</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backward</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 层</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistLevel</span> &#123;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 前进指针</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 跨度</span></span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> span;</span><br><span class="line"></span><br><span class="line">    &#125; level[];</span><br><span class="line"></span><br><span class="line">&#125; zskiplistNode;</span><br></pre></td></tr></table></figure>
+<h5 id="跳表定义"><a class="markdownIt-Anchor" href="#跳表定义"></a> 跳表定义</h5>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplist</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 表头节点和表尾节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">header</span>, *<span class="title">tail</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 表中节点的数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 表中层数最大的节点的层数</span></span><br><span class="line">    <span class="keyword">int</span> level;</span><br><span class="line"></span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure>
+<p>几个要点：</p>
+<ul>
+<li><code>level</code> 表示层，当有新的跳跃表节点 <em>insert</em> ，<strong>level</strong> 将会是 <code>[1,32]</code>之间的一个随机值
+<ul>
+<li>层的 <strong>跨度</strong> <code>level[i].span</code>，主要用于计算 <strong>rank</strong>。</li>
+<li>对于某一个需要查询的节点，头结点到它的<strong>跨度累积值</strong>就是它的 <strong>rank</strong></li>
+</ul>
+</li>
+<li>前进指针和后退指针都是用于 <strong>遍历</strong></li>
+<li>成员和分值
+<ul>
+<li>跳表内部按照分值由小到大来进行组织——从这一点上看，分值大的一般 <strong>rank</strong> 也大</li>
+<li>分值可以重复，成员不可以</li>
+</ul>
+</li>
+</ul>
+<p><em>redis</em> 中的 <strong>有序集合 zset</strong> 使用了一个跳表 + 一个字典来进行实现。通过跳表来进行 <em>rank</em> 的从小到大排序，然后通过字典来实现对象到分值的一个映射。不会产生额外的数据空间浪费，并且能够让 <strong>遍历</strong> 和 <strong>获取对象分值</strong> 都能够有一个比较小的时间复杂度</p>
+<h4 id="intset-整数集合"><a class="markdownIt-Anchor" href="#intset-整数集合"></a> Intset 整数集合</h4>
+<blockquote>
+<p>用于集合键的底层实现之一，如果集合只包含整数，并且数量不多，就采用整数集合来进行实现</p>
+</blockquote>
+<h5 id="数据结构"><a class="markdownIt-Anchor" href="#数据结构"></a> 数据结构</h5>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 编码方式</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 集合包含的元素数量</span></span><br><span class="line">    <span class="keyword">uint32_t</span> length;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 保存元素的数组, 按照升序进行排列</span></span><br><span class="line">    <span class="keyword">int8_t</span> contents[];</span><br><span class="line"></span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+<p>关注：</p>
+<ul>
+<li>编码方式决定了 <strong>contents[]</strong> 数组的元素的大小</li>
+<li>插入操作：
+<ul>
+<li>为了维护 <strong>升序</strong>关系，插入的时间复杂度是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span> ——这里其实可以优化</li>
+<li>若出现了大小超过编码的，需要进行 <strong>升级</strong></li>
+<li>不支持 <strong>降级</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="ziplist-压缩列表"><a class="markdownIt-Anchor" href="#ziplist-压缩列表"></a> Ziplist 压缩列表</h3>
+<blockquote>
+<p>可以用于基本的列表数据结构；也可以用于哈希字典 (键和值相邻排放) ，同时也是有序集合的底层实现之一。一般用于存储少量的列表项，并且列表项是一些小整数或小字符串</p>
+</blockquote>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">caribou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/03/24/redis-ji-ben-shu-ju-jie-gou/">http://example.com/2020/03/24/redis-ji-ben-shu-ju-jie-gou/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Caribouのblog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/">笔记</a></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1522968941782-e27ac665baa3?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/04/02/rang-wo-men-shi-xian-yi-xie-fu-zai-jun-heng-suan-fa/"><img class="prev-cover" src="https://images.unsplash.com/photo-1584843863029-1bf7e8312a64?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1349&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">自己动手实现负载均衡算法</div></div></a></div><div class="next-post pull-right"><a href="/2020/03/14/java-ji-he/"><img class="next-cover" src="https://images.unsplash.com/photo-1496507161348-aeec0403f141?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1350&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java集合</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/03/14/java-ji-he/" title="Java集合"><img class="cover" src="https://images.unsplash.com/photo-1496507161348-aeec0403f141?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-03-14</div><div class="title">Java集合</div></div></a></div><div><a href="/2020/02/17/tcp-ip-yue-du-bi-ji-2-jia-mi/" title="TCP-IP-阅读笔记-2 加密算法"><img class="cover" src="https://images.unsplash.com/photo-1566664345779-062ed10879e0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-02-17</div><div class="title">TCP-IP-阅读笔记-2 加密算法</div></div></a></div><div><a href="/2020/02/17/chu-tan-anna/" title="初探Anna"><img class="cover" src="https://images.unsplash.com/photo-1551342909-187e24a5797d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-02-17</div><div class="title">初探Anna</div></div></a></div><div><a href="/2019/12/05/shu-ju-ku-zheng-li-suo-yin/" title="数据库-索引"><img class="cover" src="https://images.unsplash.com/photo-1533750204176-3b0d38e9ac1e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-12-05</div><div class="title">数据库-索引</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By caribou</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css"><script>$(function () {
+  $('span.katex-display').wrap('<div class="katex-wrap"></div>')
+})</script><script>function loadValine () {
+  function initValine () {
+    const initData = {
+      el: '#vcomment',
+      appId: '98HN76q5GCACWRILBontm0RH-gzGzoHsz',
+      appKey: 'GbYo6jICDSvtwQoHopR4O0xR',
+      placeholder: '留下你的脚印',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>

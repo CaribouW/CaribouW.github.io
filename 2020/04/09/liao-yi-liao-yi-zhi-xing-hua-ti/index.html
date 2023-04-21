@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>聊一聊一致性的话题 | Caribouのblog</title><meta name="author" content="caribou"><meta name="copyright" content="caribou"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="主从复制 在分布式的 CAP 理论中，一致和可用我们往往都只能够偏向于其中的一者。这一点这里只是简单提一下。例如我们的 zk满足的就是 CP  今天主要谈一谈数据库当中的一个 一致性 话题  Mysql 主从复制  在分布式的数据库系统中，如果主数据库发生了故障，那么需要能够及时切换到从数据库，并且进行数据的恢复工作。如何保证主从数据库之间的数据一致性也就成为了焦点问题。这次把目光聚焦在 Mys">
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><meta property="og:type" content="article">
+<meta property="og:title" content="聊一聊一致性的话题">
+<meta property="og:url" content="http://example.com/2020/04/09/liao-yi-liao-yi-zhi-xing-hua-ti/index.html">
+<meta property="og:site_name" content="Caribouのblog">
+<meta property="og:description" content="主从复制 在分布式的 CAP 理论中，一致和可用我们往往都只能够偏向于其中的一者。这一点这里只是简单提一下。例如我们的 zk满足的就是 CP  今天主要谈一谈数据库当中的一个 一致性 话题  Mysql 主从复制  在分布式的数据库系统中，如果主数据库发生了故障，那么需要能够及时切换到从数据库，并且进行数据的恢复工作。如何保证主从数据库之间的数据一致性也就成为了焦点问题。这次把目光聚焦在 Mys">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images.unsplash.com/photo-1559251434-4e172832c9de?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80">
+<meta property="article:published_time" content="2020-04-09T13:02:05.000Z">
+<meta property="article:modified_time" content="2021-06-18T01:29:06.080Z">
+<meta property="article:author" content="caribou">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1559251434-4e172832c9de?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2020/04/09/liao-yi-liao-yi-zhi-xing-hua-ti/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.4.2',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: true
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2021-06-18 09:29:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Caribouのblog" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://images.unsplash.com/photo-1569525987258-6aa03a5e4926?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2132&amp;q=80" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">17</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">9</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text"> 主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">1.1.</span> <span class="toc-text"> Mysql 主从复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">1.2.</span> <span class="toc-text"> Redis 主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 完整复制过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 部分复制过程</span></a></li></ol></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://images.unsplash.com/photo-1559251434-4e172832c9de?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Caribouのblog</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">聊一聊一致性的话题</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-04-09T13:02:05.000Z" title="发表于 2020-04-09 21:02:05">2020-04-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-06-18T01:29:06.080Z" title="更新于 2021-06-18 09:29:06">2021-06-18</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">544</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>1分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="主从复制"><a class="markdownIt-Anchor" href="#主从复制"></a> 主从复制</h2>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><p>在分布式的 <em>CAP</em> 理论中，一致和可用我们往往都只能够偏向于其中的一者。这一点这里只是简单提一下。例如我们的 <code>zk</code>满足的就是 <em>CP</em></p>
+<p><img src="https://i.loli.net/2020/12/20/AlHwGEiLrFCS4VY.png" alt="image.png" /></p>
+<p>今天主要谈一谈数据库当中的一个 <strong>一致性</strong> 话题</p>
+<h3 id="mysql-主从复制"><a class="markdownIt-Anchor" href="#mysql-主从复制"></a> Mysql 主从复制</h3>
+<blockquote>
+<p>在分布式的数据库系统中，如果主数据库发生了故障，那么需要能够及时切换到从数据库，并且进行数据的恢复工作。如何保证主从数据库之间的数据一致性也就成为了焦点问题。这次把目光聚焦在 <code>Mysql</code> 上，探究它的主从复制原理</p>
+<p>对于这些数据库而言，严格的一致性是一个目标</p>
+</blockquote>
+<p><img src="https://i.loli.net/2020/04/09/e7iz9aotfqmlGHM.png" alt="image.png" /></p>
+<ul>
+<li>主节点 <code>Master</code> 进行数据更新之后，会将更新日志写入 <code>binlog</code> 当中。此时创建的是第一个线程 <code>binlong dump thread</code></li>
+<li>随后从节点 <code>Slave</code>发起连接，连接到 <code>Master</code> ，从节点启东之后，启动线程 <code>IO thread</code> ，用于将 <code>binlog</code> 内容写入到从节点的 <code>relay log</code></li>
+<li>从节点随后创建 <code>SQL thread</code> ，用于从 <code>relay log</code> 中读取内容，并且开始进行写入操作</li>
+</ul>
+<h3 id="redis-主从复制"><a class="markdownIt-Anchor" href="#redis-主从复制"></a> Redis 主从复制</h3>
+<blockquote>
+<p>其主要的目的和 <code>Mysql</code> 一致，都是为了避免主节点失效之后的数据备份</p>
+</blockquote>
+<h4 id="完整复制过程"><a class="markdownIt-Anchor" href="#完整复制过程"></a> 完整复制过程</h4>
+<ul>
+<li>启动 <code>Slave</code> ，建立和主节点 <code>Master</code> 的连接，发送 <code>sync</code> 命令</li>
+<li><code>Master</code> 启动一个后台进程，将当前的快照存储到 <code>RDB</code>当中
+<ul>
+<li>写入 <code>RDB</code> 的同时，可能会有数据的不一致性。这时候 <code>Master</code> 主进程会把写命令缓存</li>
+</ul>
+</li>
+<li><code>Master</code> 发送 <code>RDB</code> 给 <code>Slave</code> ，随后 <code>Slave</code> 进行磁盘保存</li>
+<li><code>Slave</code> 加载 <code>RDB</code> 文件到内存恢复；</li>
+<li><code>Master</code> 发送缓存给 <code>Slave</code></li>
+</ul>
+<blockquote>
+<p>存在的问题：</p>
+<p>如果 <code>Slave</code> 停止运行，再次运行的时候可能部分的数据不同步；这时候的全数据恢复会非常耗时</p>
+</blockquote>
+<h4 id="部分复制过程"><a class="markdownIt-Anchor" href="#部分复制过程"></a> 部分复制过程</h4>
+<ul>
+<li><code>Slave</code> 连接 <code>Master</code> 之后，会主动发起 <code>PSYNC</code> 命令，<code>Slave</code> 提供 <code>runid</code> , <code>offset</code> 。如果 <code>Master</code> 认定无效，那么进行完整复制；否则根据  <code>offset</code> 进行部分数据的同步</li>
+</ul>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">caribou</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/04/09/liao-yi-liao-yi-zhi-xing-hua-ti/">http://example.com/2020/04/09/liao-yi-liao-yi-zhi-xing-hua-ti/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Caribouのblog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1559251434-4e172832c9de?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/03/lun-wen-bi-ji-flexsc/"><img class="prev-cover" src="https://images.unsplash.com/photo-1601758282715-6446bbde7082?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1253&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">论文笔记-FlexSC</div></div></a></div><div class="next-post pull-right"><a href="/2020/04/02/rang-wo-men-shi-xian-yi-xie-fu-zai-jun-heng-suan-fa/"><img class="next-cover" src="https://images.unsplash.com/photo-1584843863029-1bf7e8312a64?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1349&amp;q=80" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">自己动手实现负载均衡算法</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By caribou</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css"><script>$(function () {
+  $('span.katex-display').wrap('<div class="katex-wrap"></div>')
+})</script><script>function loadValine () {
+  function initValine () {
+    const initData = {
+      el: '#vcomment',
+      appId: '98HN76q5GCACWRILBontm0RH-gzGzoHsz',
+      appKey: 'GbYo6jICDSvtwQoHopR4O0xR',
+      placeholder: '留下你的脚印',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: true,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div><!-- hexo-inject:begin --><!-- hexo-inject:end --></body></html>
